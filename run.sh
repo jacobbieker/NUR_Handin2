@@ -10,6 +10,10 @@ if [ ! -d "plots" ]; then
   mkdir plots
 fi
 
+echo "Downloading Datasets..."
+wget strw.leidenuniv.nl/~nobels/coursedata/GRBs.txt
+wget https://home.strw.leidenuniv.nl/~nobels/coursedata/randomnumbers.txt
+
 # Script that returns a plot
 echo "Run main script ..."
 python3 main.py
