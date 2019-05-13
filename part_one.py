@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=4, a4=4294957665):
     """
         Generates psuedorandom numbers with a combination of (M)LCC, 64 bit shift, and MWC
@@ -30,7 +31,7 @@ def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=
         # Now MWC part
         mwc_out = a4 * (generated_number & (2 ** 32 - 1)) + (generated_number >> 32)
 
-        seed = mwc_out # set the seed to a new number, so a different number generated next time
+        seed = mwc_out  # set the seed to a new number, so a different number generated next time
         mwc_out = mwc_out / m
 
         if mwc_out > 1.:
@@ -40,6 +41,7 @@ def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=
             close_to_final = mwc_out
 
         yield close_to_final
+
 
 def one_a(rand_gen):
     first_thousand = []
@@ -90,12 +92,11 @@ def box_muller(rand_gen, num_samples):
     z1 = np.asarray(z1)
     z2 = np.asarray(z2)
 
-    x1 = np.cos(2*np.pi*z2) * np.sqrt((-2)*np.log(z1))
+    x1 = np.cos(2 * np.pi * z2) * np.sqrt((-2) * np.log(z1))
     return x1
 
 
 def map_to_guass(x, u, sigma):
-
     # First change variance
 
     x = x * sigma
@@ -104,6 +105,7 @@ def map_to_guass(x, u, sigma):
     x = x + u
 
     return x
+
 
 def one_b(rand_gen):
     """
@@ -119,15 +121,15 @@ def one_b(rand_gen):
     # TODO Get the actual Guassian Distribution
 
     plt.hist(gauss, density=True, bins=50)
-    plt.axvline(x=u+sigma, c='r')
-    plt.axvline(x=u-sigma, c='r')
-    plt.axvline(x=u-2*sigma, c='r')
-    plt.axvline(x=u-3*sigma, c='r')
-    plt.axvline(x=u-4*sigma, c='r')
-    plt.axvline(x=u+2*sigma, c='r')
-    plt.axvline(x=u+3*sigma, c='r')
-    plt.axvline(x=u+4*sigma, c='r')
-    plt.xlim(u-5*sigma, u+5*sigma)
+    plt.axvline(x=u + sigma, c='r')
+    plt.axvline(x=u - sigma, c='r')
+    plt.axvline(x=u - 2 * sigma, c='r')
+    plt.axvline(x=u - 3 * sigma, c='r')
+    plt.axvline(x=u - 4 * sigma, c='r')
+    plt.axvline(x=u + 2 * sigma, c='r')
+    plt.axvline(x=u + 3 * sigma, c='r')
+    plt.axvline(x=u + 4 * sigma, c='r')
+    plt.xlim(u - 5 * sigma, u + 5 * sigma)
     plt.savefig("./plots/box_gauss.png", dpi=300)
     plt.cla()
 
@@ -142,6 +144,21 @@ def one_c(rand_gen):
     u = 0
     gauss = box_muller(rand_gen, 1000)
     gauss = map_to_guass(gauss, u=u, sigma=sigma)
+    # TODO Add KS Test
 
 
+def one_d(rand_gen):
+    """
+    Do Kuiper's test on the function
 
+    :param rand_gen:
+    :return:
+    """
+
+
+def one_e(rand_gen):
+    """
+    Compare to downloaded random numbers
+    :param rand_gen:
+    :return:
+    """
