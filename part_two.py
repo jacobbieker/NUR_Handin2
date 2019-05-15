@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def power_spectrum()
+
 def part_two(rand_gen):
     """
     Make an initial density field
@@ -9,3 +11,4 @@ def part_two(rand_gen):
     :param rand_gen:
     :return:
     """
+
