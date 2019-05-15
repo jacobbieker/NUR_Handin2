@@ -140,20 +140,65 @@ def one_c(rand_gen):
     :param rand_gen:
     :return:
     """
+
+    # Now need to do the ks test
+    def ks_test(z):
+        for i in range(len(z)):
+            if z[i] < 1.18: # Numerically optimal cutoff
+                block = ((np.exp((-1.*np.pi**2) / (8 * z ** 2))))
+                p_ks = (np.sqrt(2*np.pi) / z) * \
+                       (block + block**9 + block**25)
+            else:
+                block = np.exp(-2 * z ** 2)
+                p_ks = 1 - 2*(block - block**4 + block**9)
+        return p_ks
+
+    from scipy.stats import kstest
+
     sigma = 1
     u = 0
-    gauss = box_muller(rand_gen, 1000)
-    gauss = map_to_guass(gauss, u=u, sigma=sigma)
-    # TODO Add KS Test
+    probs = []
+    real_probs = []
+    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=40)
+    for sample in num_samples:
+        sample = int(sample)
+        gauss = box_muller(rand_gen, sample)
+        gauss = map_to_guass(gauss, u=u, sigma=sigma)
+        probs.append(ks_test(gauss))
+        real_probs.append(kstest(gauss, "norm"))
+
+    plt.plot(num_samples, probs, c='b', label='My KS Test')
+    plt.plot(num_samples, real_probs, c='r', label='Scipy KS Test')
+    plt.xscale('log')
+    plt.xlabel("Number of Points")
+    plt.ylabel("Ks Statistic")
+    plt.show()
+
 
 
 def one_d(rand_gen):
     """
     Do Kuiper's test on the function
 
+    This is z = F(xi)
+    D+ = max(i/n-zi)
+    D- = max(zi-(i-1)/n)
+    V = D+ + D-
+
     :param rand_gen:
     :return:
     """
+
+    sigma = 1
+    u = 0
+    probs = []
+    real_probs = []
+    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=40)
+    for sample in num_samples:
+        sample = int(sample)
+        gauss = box_muller(rand_gen, sample)
+        gauss = map_to_guass(gauss, u=u, sigma=sigma)
+        probs.append(ks_test(gauss))
 
 
 def one_e(rand_gen):
@@ -162,3 +207,27 @@ def one_e(rand_gen):
     :param rand_gen:
     :return:
     """
+
+
+    # Now need to do the ks test
+    def ks_test(z):
+        for i in range(len(z)):
+            if z[i] < 1.18: # Numerically optimal cutoff
+                block = ((np.exp((-1.*np.pi**2) / (8 * z ** 2))))
+                p_ks = (np.sqrt(2*np.pi) / z) * \
+                       (block + block**9 + block**25)
+            else:
+                block = np.exp(-2 * z ** 2)
+                p_ks = 1 - 2*(block - block**4 + block**9)
+        return p_ks
+
+    probs = []
+    sample = 100
+    u = 0
+    sigma = 1
+    gauss = box_muller(rand_gen, sample)
+    gauss = map_to_guass(gauss, u=u, sigma=sigma)
+    probs.append(ks_test(gauss))
+
+    # TODO Read in dataset from randomnumbers.txt
+
