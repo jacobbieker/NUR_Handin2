@@ -106,3 +106,4 @@ def part_three(rand_gen):
 
     # TODO Need to add analytic version and plot that one
 
+
