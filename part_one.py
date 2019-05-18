@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=4, a4=4294957665):
     """
         Generates psuedorandom numbers with a combination of (M)LCC, 64 bit shift, and MWC
@@ -106,6 +105,10 @@ def map_to_guass(x, u, sigma):
 
     return x
 
+def normpdf(x):
+    top = np.exp(-x**2/2)
+    bottom = np.sqrt(2*np.pi)
+    return top/bottom
 
 def one_b(rand_gen):
     """
@@ -119,21 +122,31 @@ def one_b(rand_gen):
     gauss = map_to_guass(gauss, u=u, sigma=sigma)
 
     # TODO Get the actual Guassian Distribution
+    pdf_x = np.linspace(u - 5*sigma, u + 5*sigma, 10000)
+    # Now move it to scale
+    pdf_y = (pdf_x - 3)
 
-    plt.hist(gauss, density=True, bins=50)
-    plt.axvline(x=u + sigma, c='r')
-    plt.axvline(x=u - sigma, c='r')
-    plt.axvline(x=u - 2 * sigma, c='r')
-    plt.axvline(x=u - 3 * sigma, c='r')
-    plt.axvline(x=u - 4 * sigma, c='r')
-    plt.axvline(x=u + 2 * sigma, c='r')
-    plt.axvline(x=u + 3 * sigma, c='r')
-    plt.axvline(x=u + 4 * sigma, c='r')
+
+    import scipy.stats as stats
+
+    plt.plot(pdf_x, stats.norm.pdf(pdf_x, u, sigma), c='b', label='PDF')
+    plt.hist(gauss, density=True, bins=50, label='Box-Muller')
+    plt.axvline(x=u + sigma, c='r', ls='dashed', label='1$\sigma$')
+    plt.axvline(x=u - sigma, c='r', ls='dashed')
+    plt.axvline(x=u - 2 * sigma, c='purple', ls='dashed', label='2$\sigma$')
+    plt.axvline(x=u - 3 * sigma, c='g', ls='dashed', label='3$\sigma$')
+    plt.axvline(x=u - 4 * sigma, c='y', ls='dashed', label='4$\sigma$')
+    plt.axvline(x=u + 2 * sigma, c='purple', ls='dashed')
+    plt.axvline(x=u + 3 * sigma, c='g', ls='dashed')
+    plt.axvline(x=u + 4 * sigma, c='y', ls='dashed')
     plt.xlim(u - 5 * sigma, u + 5 * sigma)
+    plt.legend(loc='best')
+    plt.show()
     plt.savefig("./plots/box_gauss.png", dpi=300)
     plt.cla()
 
-
+one_b(rand_gen=random_generator(5227))
+exit()
 def one_c(rand_gen):
     """
     KS Test
