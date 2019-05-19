@@ -35,6 +35,7 @@ def integration_alg(func, lower_bound, upper_bound, number_of_steps):
 
     return integration_value
 
+
 def part_four_a(rand_gen):
 
     H0 = 7.16e-11
@@ -45,5 +46,5 @@ def part_four_a(rand_gen):
         return (5*Omega_m*H0**2)/2*((H0**2)*(Omega_m*((1+z)**3) + Omega_lambda))**0.5
 
     def operand(z_prime):
-        return (1/z_prime**2)*(+1/z_prime)/((H0**2)*(Omega_m*(1+z_prime)**3 + Omega_lambda))**1.5
+        return (1/z_prime**2)*(1+1/z_prime)/((H0**2)*(Omega_m*(1+z_prime)**3 + Omega_lambda))**1.5
 

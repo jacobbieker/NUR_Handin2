@@ -141,12 +141,9 @@ def one_b(rand_gen):
     plt.axvline(x=u + 4 * sigma, c='y', ls='dashed')
     plt.xlim(u - 5 * sigma, u + 5 * sigma)
     plt.legend(loc='best')
-    plt.show()
     plt.savefig("./plots/box_gauss.png", dpi=300)
     plt.cla()
 
-one_b(rand_gen=random_generator(5227))
-exit()
 def one_c(rand_gen):
     """
     KS Test
