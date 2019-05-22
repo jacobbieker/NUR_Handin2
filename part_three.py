@@ -75,7 +75,7 @@ def solver(init, start, end, num_points):
     return times, Ds
 
 
-def part_three(rand_gen):
+def part_three():
     """
     Linear structure growth
     :param rand_gen:
@@ -86,7 +86,7 @@ def part_three(rand_gen):
     Omega_0 = 1  # De-sitter Universe
     init_time = 1
     final_time = 1000
-    time_step = 10
+    time_step = 1
     num_steps = int((final_time - init_time) / time_step)
 
     case_one = [3, 2]
@@ -107,3 +107,4 @@ def part_three(rand_gen):
     # TODO Need to add analytic version and plot that one
 
 
+part_three()

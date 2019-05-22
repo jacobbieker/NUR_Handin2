@@ -81,15 +81,16 @@ class BHNode:
 
             total_center_of_mass = np.zeros(2)
             total_mass = 0.
-            #print(self.children)
-            #print(len(particles))
             for child in self.children:
                 m = child.mass
                 child_center_of_mass = np.asarray(child.center_of_mass)
                 total_mass += m
                 total_center_of_mass += (child_center_of_mass * m) # Moment
             if len(self.children) < 1:
-                print(len(particles))
+                #while len(particles) > 12: # Leaf nodes have to have at most 12 particles
+                    # Try breaking it up again, so at most 12 leaves per end node
+                #    self.generate_quadrants(particles, leaves)
+                #    print(len(self.children))
                 for leaf in particles:
                     m = leaf.mass
                     child_center_of_mass = np.asarray(leaf.position)
@@ -97,8 +98,6 @@ class BHNode:
                     total_center_of_mass += (child_center_of_mass * m) # Moment
             self.mass = total_mass
             self.center_of_mass = total_center_of_mass / total_mass
-            #print(self.center_of_mass)
-
 
     def generate_quadrants(self, particles, leaves):
         """
@@ -136,166 +135,28 @@ class BHNode:
                 dx = 0.5*self.length*(np.array([i,j])-0.5)   # offset between parent and child box centers
                 if (i,j) == (0,0):
                     if len(lower_lpart) > 0:
-                        #print(len(lower_lpart))
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     lower_lpart,
                                                     leaves))
                 elif (i,j) == (0,1):
                     if len(lower_rpart) > 0:
-                        #print(len(lower_rpart))
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     lower_rpart,
                                                     leaves))
                 elif (i,j) == (1,1):
                     if len(upper_rpart) > 0:
-                        #print(len(upper_rpart))
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     upper_rpart,
                                                     leaves))
                 elif (i,j) == (1,0):
                     if len(upper_lpart) > 0:
-                        #print(len(upper_lpart))
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     upper_lpart,
                                                     leaves))
-
-
-class Node(object):
-    def __init__(self, parent=None, children=[], mass=0, x_range=(0,0),
-                 y_range=(0,0), is_leaf=True, particle_set=None):
-        self.parent = parent
-        self.children = children
-        self.center_of_mass = (-1,-1)
-        self.mass = mass
-        self.multipole_moment = -1
-        self.x_range = x_range
-        self.y_range = y_range
-        self.is_leaf = is_leaf
-        self.particle_set = particle_set
-
-
-class QuadTree(object):
-    def __init__(self, xlim, ylim):
-        self.center_of_mass = 0
-        self.multipole_moment = 0
-        self.mass = 0
-        self.root = Node(x_range=xlim, y_range=ylim)
-
-    def make_quadrants(self, node):
-        x_len = (node.x_range[1] - node.x_range[0])/2
-        y_len = (node.y_range[1] - node.y_range[0])/2
-
-        # Make the 4 Quadrants
-
-        lower_right = Node(parent=node, children=[],
-                           x_range=(node.x_range[0],node.x_range[0]+x_len),
-                           y_range=(node.y_range[0],node.y_range[0]+y_len))
-
-        lower_left = Node(parent=node, children=[],
-                          x_range=(node.x_range[0]+x_len,node.x_range[1]),
-                          y_range=(node.y_range[0],node.y_range[0]+y_len))
-
-        upper_right = Node(parent=node, children=[],
-                           x_range=(node.x_range[0],node.x_range[0]+x_len),
-                           y_range=(node.y_range[0]+y_len,node.y_range[1]))
-
-        upper_left = Node(parent=node, children=[],
-                          x_range=(node.x_range[0]+x_len,node.x_range[1]),
-                          y_range=(node.y_range[0]+y_len,node.y_range[1]))
-
-        node.children.append(lower_right)
-        node.children.append(lower_left)
-        node.children.append(upper_left)
-        node.children.append(upper_right)
-
-        return node
-
-    def add_particle(self, particle, node=None):
-        """
-        Recursively add particles to the correct node in the BHTree
-        :param mass:
-        :param position:
-        :return:
-        """
-
-        if node is None:
-            node = self.root
-
-        if node.is_leaf and node.center_of_mass == (-1,-1): # Base case, leaf node, nothing is stored here
-            # no children, so add here, area is 1/4th the area of the current node
-
-            # Since no children, center of mass and mass are just that of the particle
-            node.center_of_mass = particle.position
-            node.mass = particle.mass
-            node.particle_set = (particle,)
-
-            # Return from the leaf
-            return node.mass, node.center_of_mass
-
-        else:
-            # There are children so need to split into 4 Quadrants
-            masses = []
-            positions = []
-            particles = [particle]
-            if len(node.children) == 0:
-                # Need to make the quadrants once, but only if things need to be made smaller
-                # Once its not a leaf node, then pop all off of the partcle set, and add them one by one
-                node = self.make_quadrants(node)
-                node.is_leaf = False
-            # Now need to move the current particle into a quadrant, then move the new particle to its quadrant
-            # Recursively
-            if len(node.particle_set) > 0:
-                for p in node.particle_set:
-                    particles.append(p)
-                node.particle_set = ()
-
-            # Add node particle to
-            for p in particles:
-                x_pos = particle.position[0]
-                y_pos = particle.position[1]
-                for child in node.children:
-                    if child.x_range[0] <= x_pos <= child.x_range[1]:
-                        if child.y_range[0] <= y_pos <= child.y_range[1]:
-                            # In this quadrant, adds the particle
-                            m, com = self.add_particle(particle, child)
-                            masses.append(m)
-                            positions.append(com)
-
-            # Now get the center of mass and mass of the current node, need to add them up by the weighted values
-            total_mass = np.sum(masses)
-            tmp_x = 0
-            tmp_y = 0
-            for index in range(len(masses)):
-                tmp_x += masses[index]*positions[index][0] # Weighted be the mass
-                tmp_y += masses[index]*positions[index][1]
-
-            center_of_mass = (tmp_x/total_mass, tmp_y/total_mass)
-
-            node.mass = total_mass
-            node.center_of_mass = center_of_mass
-
-            return node.mass, node.center_of_mass
-
-    def calc_multipole(self, node):
-        """
-        Calculates the multipole moment of n=0 for the given node
-
-        Multipole_0 moment is the sum of the masses?
-
-
-        :param node:
-        :return:
-        """
-
-    def plot_map(self):
-        """
-        Plots the BHTree with the particles
-        :return:
-        """
 
 
 # Now run the Part 7 stuff
@@ -323,3 +184,12 @@ def part_seven():
 
 part_seven()
 
+"""
+
+D = c1*t(2/3) + c2/t  get c from boundary conditions 
+
+D(1)
+
+
+
+"""

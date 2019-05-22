@@ -24,7 +24,7 @@ def gaussian_random_field(Pk = lambda k : k**-3.0, size = 100):
 for alpha in [-1.0, -3.0, -2.0]:
     out = gaussian_random_field(Pk = lambda k: k**alpha, size=1024)
     plt.figure()
-    m = plt.imshow(out.real, interpolation='none', origin='lower')
+    m = plt.imshow(np.abs(out), interpolation='none', origin='lower')
     plt.colorbar(m)
     plt.show()
 

@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from numpy import genfromtxt
 
 
 def sigmod(x):
@@ -212,3 +213,8 @@ def network(num_hidden):
     """
 
 
+def part_six():
+    data = genfromtxt("GRBs.txt", skip_header=2)
+    print(data)
+
+part_six()
