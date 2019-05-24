@@ -82,13 +82,13 @@ def xor_net(x1, x2, weights):
     input_value = np.reshape(np.asarray([x1, x2]), (2, 1))  # Get it as a column vector
 
     hidden_layer_output = foreward_prop(input_value, weights_input, bias_node_hidden, weights_hidden, bias_node_output,
-                                        sigmoid)
+                                        sigmod)
 
     # Now hidden_layer_output outputs to the single output node
 
     return hidden_layer_output
 
-def mse(weights):
+def mse(weights, x, y):
     """
     (0,0),(0,1),(1,0),(1,1) = 0,1,1,0
     C = 1/2n * sum(y_true - weight)^2
@@ -97,25 +97,11 @@ def mse(weights):
     :return:
     """
 
-    X = np.array([
-        [0, 0],
-        [1, 0],
-        [0, 1],
-        [1, 1]
-    ])
-
-    y = np.array([
-        [0],
-        [1],
-        [1],
-        [0]
-    ])
-
     mean_squared_error = 0.0
 
     misclassified_inputs = 0
 
-    for index, input_value in enumerate(X):
+    for index, input_value in enumerate(x):
         x1 = input_value[0]
         x2 = input_value[1]
         y_true = y[index]
@@ -133,7 +119,7 @@ def mse(weights):
     return mean_squared_error, misclassified_inputs
 
 
-def grdmse(weights):
+def grdmse(weights, x, y):
     """
     Gradient Descent by changing eta
     :param weights:
@@ -145,12 +131,12 @@ def grdmse(weights):
     # (f(1+e,2,3,4,5,6,7,8,9) - f(1,2,3,4,5,6,7,8,9))/e for example
     # Need to get mse from each for that
 
-    base_mse, _ = mse(weights)
+    base_mse, _ = mse(weights, x, y)
 
     grad_weights = np.zeros(weights.shape)
     for index, weight in enumerate(weights):
         weights[index] = weights[index] + eta
-        changed_mse, _ = mse(weights)
+        changed_mse, _ = mse(weights, x, y)
         gradient = (changed_mse - base_mse) / eta
         grad_weights[index] = gradient
         # Go back to default value
@@ -159,7 +145,7 @@ def grdmse(weights):
     return grad_weights
 
 
-def train_network(size, iterations=100000, learning_rate=0.1, init_low=-1.5, init_high=1.5, init_method=np.random.uniform):
+def train_network(size, data, labels, iterations=100000, learning_rate=0.1, init_low=-1.5, init_high=1.5, init_method=np.random.uniform):
     """
     Trains the XOR network
     :param size: Size of the weights, 9 for XOR, 256 for MNIST (not implemented)
@@ -179,10 +165,10 @@ def train_network(size, iterations=100000, learning_rate=0.1, init_low=-1.5, ini
     misclassified = np.zeros((iterations, 1))
     for i in range(iterations):
         # Get MSE with current weights
-        mserror[i], misclassified[i] = mse(weights)
+        mserror[i], misclassified[i] = mse(weights, data, labels)
 
         # Get gradient
-        gradient_weights = grdmse(weights)
+        gradient_weights = grdmse(weights, data, labels)
 
         # update weights with gradient descent
         weights = weights - learning_rate * gradient_weights
@@ -216,5 +202,14 @@ def network(num_hidden):
 def part_six():
     data = genfromtxt("GRBs.txt", skip_header=2)
     print(data)
+    mask = (data[:,4] > -1.)
+    train_data = data[mask]
+    print(train_data)
+    labels = []
+    for item in train_data[:,3]:
+        labels.append(item < 90)
+    print(labels)
+    training_data = list(zip(train_data[:,2], train_data[:,4]))
+    train_network(9, training_data, labels)
 
 part_six()
