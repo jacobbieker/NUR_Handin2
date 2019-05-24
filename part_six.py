@@ -210,6 +210,12 @@ def part_six():
         labels.append(item < 90)
     print(labels)
     training_data = list(zip(train_data[:,2], train_data[:,4]))
-    train_network(9, training_data, labels)
+    weights, iterations, mserror, misclassified = train_network(9, training_data, labels)
+    plt.plot(iterations, mserror)
+    plt.savefig("GRB_MSError.png", dpi=300)
+    plt.cla()
+    plt.plot(iterations, misclassified)
+    plt.savefig("GRB_Misclassification.png", dpi=300)
+    plt.cla()
 
 part_six()
