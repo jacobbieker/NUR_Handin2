@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.stats import kstest, norm
+from astropy.stats import kuiper as kuiper_reference
 
 def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=4, a4=4294957665):
     """
@@ -121,16 +123,14 @@ def one_b(rand_gen):
     gauss = box_muller(rand_gen, 1000)
     gauss = map_to_guass(gauss, u=u, sigma=sigma)
 
-    # TODO Get the actual Guassian Distribution
+    def gaussian(x, u=0, variance=1.):
+        return 1 / (np.sqrt(2 * np.pi * variance)) * np.exp(-(x - u) ** 2 / (2 * variance))
+
     pdf_x = np.linspace(u - 5*sigma, u + 5*sigma, 10000)
-    # Now move it to scale
-    pdf_y = (pdf_x - 3)
+    pdf_y = gaussian(pdf_x, u, sigma*sigma)
 
-
-    import scipy.stats as stats
-
-    plt.plot(pdf_x, stats.norm.pdf(pdf_x, u, sigma), c='b', label='PDF')
-    plt.hist(gauss, density=True, bins=50, label='Box-Muller')
+    plt.plot(pdf_x, pdf_y, c='r', label='Gaussian PDF')
+    plt.hist(gauss, density=True, bins=12, label='Box-Muller')
     plt.axvline(x=u + sigma, c='r', ls='dashed', label='1$\sigma$')
     plt.axvline(x=u - sigma, c='r', ls='dashed')
     plt.axvline(x=u - 2 * sigma, c='purple', ls='dashed', label='2$\sigma$')
@@ -144,6 +144,22 @@ def one_b(rand_gen):
     plt.savefig("./plots/box_gauss.png", dpi=300)
     plt.cla()
 
+one_b(random_generator(5227))
+
+
+def common_test(points, func):
+    """
+    Calcs KS test with Scipy's norm
+    :param points:
+    :return:
+    """
+    number_of_bins = int(200*(max(points) - min(points)))
+    values, bins = np.histogram(points, bins=number_of_bins)
+    bin_width = bins[1] - bins[0]
+    bins += bin_width
+
+    return func(points, values, bins)
+
 def one_c(rand_gen):
     """
     KS Test
@@ -152,39 +168,71 @@ def one_c(rand_gen):
     """
 
     # Now need to do the ks test
+    # This calculates the value for KS at given points
     def ks_test(z):
-        for i in range(len(z)):
-            if z[i] < 1.18: # Numerically optimal cutoff
-                block = ((np.exp((-1.*np.pi**2) / (8 * z ** 2))))
-                p_ks = (np.sqrt(2*np.pi) / z) * \
-                       (block + block**9 + block**25)
-            else:
-                block = np.exp(-2 * z ** 2)
-                p_ks = 1 - 2*(block - block**4 + block**9)
-        return p_ks
+        #for i in range(len(z)):
+        if z == 0:
+            return 1
+        elif z < 1.18: # Numerically optimal cutoff
+            block = ((np.exp((-1.*np.pi**2) / (8 * z ** 2))))
+            p_ks = (np.sqrt(2*np.pi) / z) * \
+                   (block + block**9 + block**25)
+        else:
+            block = np.exp(-2 * z ** 2)
+            p_ks = 1 - 2*(block - block**4 + block**9)
+        return 1 - p_ks
 
-    from scipy.stats import kstest
+    def ks_test_part(points, values, bins):
+        summed_bins = sum(values)
+        distribution = []
+        for i in range(len(values)):
+            distribution.append(abs(sum(values[:i])/summed_bins - norm.cdf(bins[i])))
+
+        distribution = np.asarray(distribution)
+
+        D = max(abs(distribution))
+        z = D*(np.sqrt(len(points)) + 0.12 + 0.11/np.sqrt(len(points)))
+
+        return D, ks_test(z)
 
     sigma = 1
     u = 0
     probs = []
     real_probs = []
-    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=40)
-    for sample in num_samples:
+    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=50)
+    reference_ks = np.zeros(50)
+    reference_p_value = np.zeros(50)
+    ks = np.zeros(50)
+    p_value = np.zeros(50)
+
+    for index, sample in enumerate(num_samples):
         sample = int(sample)
         gauss = box_muller(rand_gen, sample)
         gauss = map_to_guass(gauss, u=u, sigma=sigma)
-        probs.append(ks_test(gauss))
-        real_probs.append(kstest(gauss, "norm"))
+        ks[index], p_value[index] = common_test(gauss, ks_test_part)
+        reference_ks[index], reference_p_value[index] = kstest(gauss, "norm")
 
-    plt.plot(num_samples, probs, c='b', label='My KS Test')
-    plt.plot(num_samples, real_probs, c='r', label='Scipy KS Test')
+    plt.plot(num_samples, ks, c='b', label='My KS Test')
+    plt.plot(num_samples, reference_ks, c='r', label='Scipy KS Test')
     plt.xscale('log')
+    plt.yscale('log')
     plt.xlabel("Number of Points")
-    plt.ylabel("Ks Statistic")
-    plt.show()
+    plt.ylabel("KS Statistic (D)")
+    plt.legend(loc='best')
+    plt.savefig("plots/KStest.png", dpi=300)
+    plt.cla()
 
+    plt.plot(num_samples, p_value, c='b', label='My KS Test Probability')
+    plt.plot(num_samples, reference_p_value, c='r', label='Scipy KS Test Probability')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel("Number of Points")
+    plt.ylabel("Probability / 1 - p_value")
+    plt.legend(loc='best')
+    plt.savefig("plots/KStest_pvalue.png", dpi=300)
+    plt.cla()
 
+one_c(random_generator(5227))
 
 def one_d(rand_gen):
     """
@@ -199,17 +247,62 @@ def one_d(rand_gen):
     :return:
     """
 
+    def kuiper(z):
+        if z < 0.4:
+            return 1
+        else:
+            block = np.exp(-2*(z**2))
+            return 2 *((4*(z**2-1))*block + (16*z**2-1)*block**4 + (32*z**2-1)*block**9)
+
+    def kuiper_test_part(points, values, bins):
+        summed_bins = sum(values)
+        distribution = []
+        for i in range(len(values)):
+            distribution.append(abs(sum(values[:i])/summed_bins - norm.cdf(bins[i])))
+
+        distribution = np.asarray(distribution)
+
+        V = abs(max(distribution)) + abs(min(distribution))
+        z = V*(np.sqrt(len(points)) + 0.155 + 0.24/np.sqrt(len(points)))
+
+        return V, kuiper(z)
+
     sigma = 1
     u = 0
-    probs = []
-    real_probs = []
-    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=40)
-    for sample in num_samples:
+    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=50)
+    reference_ks = np.zeros(50)
+    reference_p_value = np.zeros(50)
+    test = np.zeros(50)
+    p_value = np.zeros(50)
+
+    for index, sample in enumerate(num_samples):
         sample = int(sample)
         gauss = box_muller(rand_gen, sample)
         gauss = map_to_guass(gauss, u=u, sigma=sigma)
-        probs.append(ks_test(gauss))
+        test[index], p_value[index] = common_test(gauss, kuiper_test_part)
+        reference_ks[index], reference_p_value[index] = kuiper_reference(gauss, norm.cdf)
 
+    plt.plot(num_samples, test, c='b', label='My Kuiper Test')
+    plt.plot(num_samples, reference_ks, c='r', label='Astropy Kuiper Test')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel("Number of Points")
+    plt.ylabel("KS Statistic (D)")
+    plt.legend(loc='best')
+    plt.savefig("plots/KuiperTest.png", dpi=300)
+    plt.cla()
+
+    plt.plot(num_samples, p_value, c='b', label='My Kuiper Test Probability')
+    plt.plot(num_samples, reference_p_value, c='r', label='Astropy Kuiper Test Probability')
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel("Number of Points")
+    plt.ylabel("Probability / 1 - p_value")
+    plt.legend(loc='best')
+    plt.savefig("plots/Kuiper_pvalue.png", dpi=300)
+    plt.cla()
+
+one_d(random_generator(5227))
 
 def one_e(rand_gen):
     """

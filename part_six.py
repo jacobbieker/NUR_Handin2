@@ -114,9 +114,9 @@ def mse(weights, x, y):
                 misclassified_inputs += 1
         mean_squared_error += (y_true - output) ** 2
 
-    mean_squared_error /= 4.  # Get the mean value of the error
+    mean_squared_error /= len(x)  # Get the mean value of the error
 
-    return mean_squared_error, misclassified_inputs
+    return mean_squared_error, misclassified_inputs / len(y)
 
 
 def grdmse(weights, x, y):
@@ -212,9 +212,13 @@ def part_six():
     training_data = list(zip(train_data[:,2], train_data[:,4]))
     weights, iterations, mserror, misclassified = train_network(9, training_data, labels)
     plt.plot(iterations, mserror)
+    plt.xlabel("Iteration")
+    plt.ylabel("Mean Squared Error")
     plt.savefig("GRB_MSError.png", dpi=300)
     plt.cla()
     plt.plot(iterations, misclassified)
+    plt.ylabel("Misclassification Fraction")
+    plt.xlabel("Iteration")
     plt.savefig("GRB_Misclassification.png", dpi=300)
     plt.cla()
 
