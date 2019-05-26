@@ -60,103 +60,104 @@ class Particle(object):
 
 
 class BHNode:
-    def __init__(self, center, length, particles, leaves=[]):
+    def __init__(self, center, length, particles, parent=None):
         self.center = center
         self.length = length
         self.children = []
+        self.points = []
+        self.parent = parent
+        self.is_leaf = False
+        self.moment = 0
 
-        num_particles = len(particles)
+        self.generate_quadrants(particles=particles, limit=12)
 
-        if num_particles == 1:
-            # Single point, so its the leaf
-            leaves.append(self)
-            self.center_of_mass = np.asarray(particles[0].position)
-            self.mass = particles[0].mass
-            self.id = particles[0].id
-            self.gravity = np.zeros(2)
+        self.moment = self.calc_multipole()
 
-        else:
-            # More than one particle, so need to split up the area
-            self.generate_quadrants(particles, leaves)
 
-            total_center_of_mass = np.zeros(2)
-            total_mass = 0.
+
+    def plot(self, xlabel='', ylabel='', filename="plots/bhtree.png", save=False):
+        fig, ax = plt.subplots(1, figsize=(7,7))
+        plt.xlim(self.center[0] - self.length/2, self.center[0]+self.length/2)
+        plt.ylim(self.center[1]-self.length/2, self.center[1]+self.length/2)
+
+
+    def calc_multipole(self):
+        for node in self.points:
+            self.moment += node.points.mass
+
+        if not self.is_leaf:
             for child in self.children:
-                m = child.mass
-                child_center_of_mass = np.asarray(child.center_of_mass)
-                total_mass += m
-                total_center_of_mass += (child_center_of_mass * m) # Moment
-            if len(self.children) < 1:
-                #while len(particles) > 12: # Leaf nodes have to have at most 12 particles
-                    # Try breaking it up again, so at most 12 leaves per end node
-                #    self.generate_quadrants(particles, leaves)
-                #    print(len(self.children))
-                for leaf in particles:
-                    m = leaf.mass
-                    child_center_of_mass = np.asarray(leaf.position)
-                    total_mass += m
-                    total_center_of_mass += (child_center_of_mass * m) # Moment
-            self.mass = total_mass
-            self.center_of_mass = total_center_of_mass / total_mass
+                child.calc_multipole()
 
-    def generate_quadrants(self, particles, leaves):
+
+
+    def generate_quadrants(self, particles, limit=12):
         """
         Generates the leaves if needed
         :param particles:
         :param leaves:
         :return:
         """
-        lower_lpart = []
-        lower_rpart = []
-        upper_rpart = []
-        upper_lpart = []
+        if len(self.points) == 0:
+            self.is_leaf = True
+            return
 
-        dx = 0.5*self.length # Change in each direction
-        origin = (self.center[0]-dx, self.center[1]-dx)
-        lower_left = (origin[0], origin[0]+dx, origin[1], origin[1]+dx) # (x,x,y,y)
-        lower_right = (origin[0]+dx, origin[0]+2*dx, origin[1], origin[1]+dx)
-        upper_right = (origin[0]+dx, origin[0]+2*dx, origin[1]+dx, origin[1]+2*dx)
-        upper_left = (origin[0], origin[0]+dx, origin[1]+dx, origin[1]+2*dx)
+        elif int(len(self.points)) <= limit:
+            self.is_leaf = True
+            return
 
-        for _, part in enumerate(particles):
-            position = part.position
-            # To reduce overlap
-            if lower_left[0] <= position[0] < lower_left[1] and lower_left[2] <= position[1] < lower_left[3]:
-                lower_lpart.append(part)
-            elif lower_right[0] <= position[0] <= lower_right[1] and lower_right[2] <= position[1] < lower_right[3]:
-                lower_rpart.append(part)
-            elif upper_right[0] <= position[0] <= upper_right[1] and upper_right[2] <= position[1] <= upper_right[3]:
-                upper_rpart.append(part)
-            elif upper_left[0] <= position[0] < upper_left[1] and upper_left[2] <= position[1] <= upper_left[3]:
-                upper_lpart.append(part)
+        elif len(self.points) > limit:
+            lower_lpart = []
+            lower_rpart = []
+            upper_rpart = []
+            upper_lpart = []
 
-        for i in range(2):
-            for j in range(2):
-                dx = 0.5*self.length*(np.array([i,j])-0.5)   # offset between parent and child box centers
-                if (i,j) == (0,0):
-                    if len(lower_lpart) > 0:
+            dx = 0.5*self.length # Change in each direction
+            origin = (self.center[0]-dx, self.center[1]-dx)
+            lower_left = (origin[0], origin[0]+dx, origin[1], origin[1]+dx) # (x,x,y,y)
+            lower_right = (origin[0]+dx, origin[0]+2*dx, origin[1], origin[1]+dx)
+            upper_right = (origin[0]+dx, origin[0]+2*dx, origin[1]+dx, origin[1]+2*dx)
+            upper_left = (origin[0], origin[0]+dx, origin[1]+dx, origin[1]+2*dx)
+
+            for _, part in enumerate(particles):
+                position = part.position
+                # To reduce overlap
+                if lower_left[0] <= position[0] < lower_left[1] and lower_left[2] <= position[1] < lower_left[3]:
+                    lower_lpart.append(part)
+                elif lower_right[0] <= position[0] <= lower_right[1] and lower_right[2] <= position[1] < lower_right[3]:
+                    lower_rpart.append(part)
+                elif upper_right[0] <= position[0] <= upper_right[1] and upper_right[2] <= position[1] <= upper_right[3]:
+                    upper_rpart.append(part)
+                elif upper_left[0] <= position[0] < upper_left[1] and upper_left[2] <= position[1] <= upper_left[3]:
+                    upper_lpart.append(part)
+
+            for i in range(2):
+                for j in range(2):
+                    dx = 0.5*self.length*(np.array([i,j])-0.5)   # offset between parent and child box centers
+                    print(dx)
+                    if (i,j) == (0,0):
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     lower_lpart,
-                                                    leaves))
-                elif (i,j) == (0,1):
-                    if len(lower_rpart) > 0:
+                                                    parent=self))
+                    elif (i,j) == (0,1):
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     lower_rpart,
-                                                    leaves))
-                elif (i,j) == (1,1):
-                    if len(upper_rpart) > 0:
+                                                    parent=self))
+                    elif (i,j) == (1,1):
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     upper_rpart,
-                                                    leaves))
-                elif (i,j) == (1,0):
-                    if len(upper_lpart) > 0:
+                                                    parent=self))
+                    elif (i,j) == (1,0):
                         self.children.append(BHNode(self.center+dx,
                                                     self.length/2,
                                                     upper_lpart,
-                                                    leaves))
+                                                    parent=self))
+
+        for child in self.children:
+            self.generate_quadrants(child, limit=12)
 
 
 # Now run the Part 7 stuff
@@ -179,8 +180,7 @@ def part_seven():
     print(node.mass)
     print(node.COM)
     BHTree = BHNode(center=(75,75), length=150, particles=particles)
-    print(BHTree.center_of_mass)
-    print(BHTree.mass)
+    print(BHTree.moment)
 
 part_seven()
 
