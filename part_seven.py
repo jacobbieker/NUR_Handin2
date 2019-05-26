@@ -86,6 +86,24 @@ class BHNode:
             for child in self.children:
                 child.calc_multipole()
 
+    def get_point(self, id):
+        """
+        Want to do Breadth First
+        :param id:
+        :return:
+        """
+
+        for i in range(len(self.points)):
+            if self.points[i].id == id:
+                if self.points[i].node.is_leaf:
+                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.points[i].id, self.points[i].position,
+                                                                            self.points[i].node.moment))
+                else:
+                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.points[i].id, self.points[i].position,
+                                                                          self.points[i].node.moment))
+                    for child in self.points[i].node.children:
+                        child.get_point(id)
+
     def generate_quadrants(self, limit=12):
         """
         Generates the leaves if needed
@@ -99,6 +117,8 @@ class BHNode:
 
         elif int(len(self.points)) <= limit:
             self.is_leaf = True
+            for part in self.points:
+                part.node = self
             return
 
         elif len(self.points) > limit:
@@ -183,15 +203,9 @@ def part_seven():
     BHTree.calc_multipole()
     print(BHTree.moment)
 
+    id_100 = particles[100].id
+
+    BHTree.get_point(id_100)
+
 
 part_seven()
-
-"""
-
-D = c1*t(2/3) + c2/t  get c from boundary conditions 
-
-D(1)
-
-
-
-"""
