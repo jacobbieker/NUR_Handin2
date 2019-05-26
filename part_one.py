@@ -358,6 +358,7 @@ def one_e(rand_gen):
         plt.yscale('log')
         plt.xlabel("Number of Points")
         plt.ylabel("KS Statistic (D)")
+        plt.title("KS Test For Rand Set: {}".format(i))
         plt.legend(loc='best')
         plt.savefig("plots/RandNumKS_{}.png".format(i), dpi=300)
         plt.cla()
@@ -367,6 +368,10 @@ def one_e(rand_gen):
         plt.yscale('log')
         plt.xlabel("Number of Points")
         plt.ylabel("Probability / 1 - p_value")
+        plt.title("KS Test For Rand Set: {}".format(i))
         plt.legend(loc='best')
         plt.savefig("plots/KStest_pvalue_{}.png".format(i), dpi=300)
         plt.cla()
+
+one_e(random_generator(5227))
+
