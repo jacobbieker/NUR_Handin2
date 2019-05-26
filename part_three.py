@@ -13,6 +13,18 @@ def a_dot(t):
     return H0 * ((3 / 2) * H0 * t) ** (-1 / 3)
 
 
+def dadt(t):
+    return ((2*H0**2)/(3*t))**(1/3)
+
+
+def second_order(r, t):
+    D = r[0]
+    y = r[1]
+    dD = y
+    dy = (2/3)*D/t**2 - 4*y/(3*t)
+    return np.array([dD, dy])
+
+
 def diff_eqn(r, t):
     """
 
@@ -39,7 +51,6 @@ def runge_kutta(diff_egn, r, t, h):
     :param h:
     :return:
     """
-
     k1 = h * diff_egn(r, t)
     k2 = h * diff_egn(r + k1 / 2, t + h / 2)
     k3 = h * diff_egn(r + k2 / 2, t + h / 2)
@@ -48,7 +59,11 @@ def runge_kutta(diff_egn, r, t, h):
     return k1 / 6 + k2 / 3 + k3 / 3 + k4 / 6
 
 
-def solver(init, start, end, num_points):
+def error_estimate(y, y_star):
+    return abs(y - y_star)
+
+
+def solver(init, times):
     """
     Solves the ODE
     :param init:
@@ -58,21 +73,36 @@ def solver(init, start, end, num_points):
     :return:
     """
 
-    # integration step
-    step = (end - start) / num_points
-
     # initial conditions
     r = init
-    times = []
     Ds = []
+    ys = []
+    step = times[1] - times[0]
 
     # Solve ODE
-    for t in np.arange(start, end, step):
-        times.append(t)
+    for t in times:
         Ds.append(r[0])
-        r += runge_kutta(diff_eqn, r, t, step)
+        ys.append(r[1])
+        r = runge_kutta(second_order, r, t, step)
 
-    return times, Ds
+    return Ds
+
+
+def D_analytic_solution(t, case):
+    """
+    Analytic Solutions for D based on the three cases
+    :param t:
+    :param case:
+    :return:
+    """
+    if case == "case 1":
+        return 3*t**(2/3)
+    elif case == "case 2":
+        return 10/t
+    elif case == "case 3":
+        return 3*t**(3/2) + 2/t
+    else:
+        raise NotImplementedError
 
 
 def part_three():
@@ -84,27 +114,36 @@ def part_three():
 
     H0 = 7.16e-11
     Omega_0 = 1  # De-sitter Universe
-    init_time = 1
-    final_time = 1000
-    time_step = 1
-    num_steps = int((final_time - init_time) / time_step)
+    times = np.linspace(1, 1000, 10000)
 
     case_one = [3, 2]
     case_two = [10, -10]
     case_three = [5, 0]
 
     cases = ([case_one, "case 1"], [case_two, "case 2"], [case_three, "case 3"])
-
     for i in range(len(cases)):
-        times, Ds = solver(cases[i][0], init_time, final_time, num_steps)
-        plt.loglog(times, Ds, label=cases[i][1])
+        D = []
+        y = []
+        #times, Ds = solver(cases[i][0], times)
+        y.append(cases[i][0][1])
+        D.append(cases[i][0][0])
 
+        h = times[1] - times[0]
+
+        for j in range(1, len(times)):
+            r = np.array([D[j-1], y[j-1]])
+            r = runge_kutta(diff_eqn, r, times[i-1], h)
+            D.append(r[0])
+            y.append(r[1])
+
+        plt.loglog(times, D, label=cases[i][1])
+        plt.loglog(times, D_analytic_solution(times, cases[i][1]), linestyle="--", label="Analytic {}".format(cases[i][1]))
+
+    plt.title("Numerical and Analytic Solutions")
     plt.xlabel("Time (yr)")
-    plt.ylabel("D(t)")
+    plt.ylabel("Linear Growth Factor D(t)")
     plt.legend(loc='best')
-    plt.show()
-
-    # TODO Need to add analytic version and plot that one
-
+    plt.savefig("plots/growth_factors.png", dpi=300)
+    plt.cla()
 
 part_three()
