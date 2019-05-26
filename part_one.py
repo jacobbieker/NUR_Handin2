@@ -287,7 +287,7 @@ def one_d(rand_gen):
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel("Number of Points")
-    plt.ylabel("KS Statistic (D)")
+    plt.ylabel("Kuiper Statistic (V)")
     plt.legend(loc='best')
     plt.savefig("plots/KuiperTest.png", dpi=300)
     plt.cla()
