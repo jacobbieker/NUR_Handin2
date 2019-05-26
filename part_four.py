@@ -117,3 +117,78 @@ def part_four_a(rand_gen):
 
     D = 5*Omega_M/2*np.sqrt(Omega_M/a_final**3 + Omega_Lambda)*A
     print("Linear growth factor at z = 50 (a = 1/51): {:.8e}".format(D))
+
+def part_b():
+    H0 = 7.16e-11
+    Omega_lambda = 0.7
+    Omega_m = 0.3
+
+    def growth_factor_z(z):
+        """
+        Interior of integral
+        :param z:
+        :return:
+        """
+        return (1+z)/(Omega_m*(1+z)**3+Omega_Lambda)**(3/2)
+
+    def growth_factor_a(a):
+        """
+        Growth Factor with a
+        :param a:
+        :return:
+        """
+        return (1/a**3)/(Omega_M/a**3 + Omega_Lambda)**(3/2)
+
+    def H(z):
+        """
+        Hubble Constant
+        :param z:
+        :return:
+        """
+        return H0*np.sqrt(Omega_M*(1+z)**3 + Omega_Lambda)
+
+    def D_a(a, A):
+        """
+        Linear Growth Factor D(a)
+        :param a:
+        :param A:
+        :return:
+        """
+        return 5*Omega_M/2*(Omega_M/a**3 + Omega_Lambda)**(1/2)*A
+
+    def differentiate_point(func, b, eps=1e-12):
+        """
+        Numerical differentiation at point
+        :param func:
+        :param b:
+        :param eps:
+        :return:
+        """
+        h = 0.01
+        dydx = (func(b+h/2) - func(b - h/2)) / h
+
+        while True:
+            h = h / 2
+            d = (func(b+h/2) - func(b - h/2)) / h
+            if abs(d - dydx) < eps:
+                return d
+            else:
+                dydx = d
+
+
+    def linear_growth_factor(z):
+        return (5*Omega_m*H0**2)/2*((H0**2)*(Omega_m*((1+z)**3) + Omega_lambda))**0.5
+
+    def operand(z_prime):
+        return (1/z_prime**2)*(1+1/z_prime)/((H0**2)*(Omega_m*(1+z_prime)**3 + Omega_lambda))**1.5
+
+
+    a0 = 0
+    a_final = 1/51
+    A = integration_alg(growth_factor_a, a0, a_final)
+
+    D_prime = -15/4*Omega_M**2*H0*A/a_final**3
+    print('First derivative of LGF at z = 50 (a = 1/51): {:.8e}'.format(D_prime))
+
+    D_prime_numerical = a_final*H(1/a_final - 1)*differentiate_point(D_a, b=a_final, eps=1e-13)
+    print('First derivative of LGF at z = 50 (a = 1/51), numerical: {:.8e}'.format(D_prime_numerical))
