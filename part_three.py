@@ -7,7 +7,7 @@ Omega_0 = 1
 
 def a(t):
     """
-    The equation for a
+    The equation for a, the scale factor
     :param t:
     :return:
     """
@@ -16,7 +16,7 @@ def a(t):
 
 def a_dot(t):
     """
-    Derivative of a
+    Derivative of a, the scale factor
     :param t:
     :return:
     """
@@ -80,26 +80,29 @@ def part_three():
     :return:
     """
     t = np.linspace(1, 1000, 10000)
-    D = np.zeros(len(t))
-    y = np.zeros(len(t))  # y = dD/dt
 
+    # Now the three cases
     case_one = [3, 2]
     case_two = [10, -10]
     case_three = [5, 0]
 
+    # calc step size
+    h = t[1] - t[0]
+
     cases = ([case_one, "case 1"], [case_two, "case 2"], [case_three, "case 3"])
     for i in range(len(cases)):
-        # times, Ds = solver(cases[i][0], times)
-        D[0] = cases[i][0][0]
-        y[0] = cases[i][0][1]
-
-        h = t[1] - t[0]
+        # Initial conditions
+        D = []
+        y = []
+        D.append(cases[i][0][0])
+        y.append(cases[i][0][1])
 
         for j in range(1, len(t)):
+            # Create the r for the equations
             r = np.array([D[j - 1], y[j - 1]])
             r = runge_kutta(diff_eqn, r, t[j - 1], h)
-            D[j] = r[0]
-            y[j] = r[1]
+            D.append(r[0])
+            y.append(r[1])
 
         plt.plot(t, D, label=cases[i][1])
         plt.plot(t, D_analytic_solution(t, cases[i][1]), linestyle="--", label="Analytic {}".format(cases[i][1]))
