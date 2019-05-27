@@ -1,6 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
+import sys
 
 H0 = 7.16e-11
 Omega_M = 0.3
@@ -44,14 +43,6 @@ def part_b():
     H0 = 7.16e-11
     Omega_lambda = 0.7
     Omega_m = 0.3
-
-    def growth_factor_z(z):
-        """
-        Interior of integral
-        :param z:
-        :return:
-        """
-        return (1+z)/(Omega_m*(1+z)**3+Omega_Lambda)**(3/2)
 
     def growth_factor_a(a):
         """
@@ -107,8 +98,8 @@ def part_b():
 
     a0 = 0
     a_final = 1/51
-    A = integration_alg(growth_factor_a, a0, a_final)
-
+    A = integration_alg(growth_factor_a, a0, a_final, 10000)
+    sys.stdout = open('4b.txt', 'w')
     D_prime = -15/4*Omega_M**2*H0*A/a_final**3
     print('First derivative of LGF at z = 50 (a = 1/51): {:.8e}'.format(D_prime))
 

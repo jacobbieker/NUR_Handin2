@@ -20,7 +20,7 @@ all_one(rand_gen)
 
 part_two(rand_gen)
 part_three()
-all_four(rand_gen)
+all_four()
 part_six()
 part_seven()
 
