@@ -2,52 +2,17 @@
 
 The file of the functions used for this exercise is:
 
-\lstinputlisting{five_a.py}
+\lstinputlisting{part_five.py}
 
-The result of this function is given by:
+While I ran out of time to finish this part, here is the methodology I was attempting to make.
+I did generate the grid, as well as the random points, and started on the Nearest Grid Point method. The idea was to
+go to thebox of 8 points surrounding the mass that is being added, calculate the distance to each of the grid points, and
+add all the mass to the closest of the 8 points. While not the most efficient, it would have resulted in the mass being
+distributed properly.
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
-  \caption{The interpolation function in action.}
-  \label{fig:54}
-\end{figure}
+\section{Part 5.c Cloud In Cell Method}
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
-  \caption{The interpolation function in action.}
-  \label{fig:59}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
-  \caption{The interpolation function in action.}
-  \label{fig:511}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
-  \caption{The interpolation function in action.}
-  \label{fig:514}
-\end{figure}
-
-
-\section{Part 2.b Interpolation}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_b.py}
-
-My script produces the following result, see Fig. \ref{fig:interp}. This shows the differences between the linear
-interpolation and cubic spline. Both are essentially the same for this data, except between 0.1 and 1. In comparison to
-the actual values, the interpolated values underestimate for all values between $x$ = 1 and $x$ = 5.
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
-  \caption{The interpolation function in action.}
-  \label{fig:interp}
-\end{figure}
+For the Cloud In Cell Method, while again, I ran out of time to implement it, to do so I would have done as follows.
+I would have gotten the closest 8 points making up the box around the mass, in the same way as for the Nearest Grid Point method.
+Once having those points, the next step is calculating how much of the particle is the closest to each grid point, and assigning that
+portion of the particle's mass to the grid point it is closest to.
