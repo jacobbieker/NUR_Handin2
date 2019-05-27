@@ -1,59 +1,17 @@
-\section{Part 3.a Likelihood maximization}
-
-For this part, I could not calculate the log-likelihood for the distributions. At the same time, to continue on,
-the satellite distribution for the given mass bin can be shown to change as the mass increases. This is shown in Figures
-\ref{fig:m11}, \ref{fig:m12}, \ref{fig:m13}, \ref{fig:m14}, and \ref{fig:m15}. To complete this task, what I should have
-done would have been to construct, based on the given $n(x)$, the log-likelihood for where most of the satellites would
-be located in $x$ dependent on $a$,$b$,and $c$. The maximum likelihood would be where the peak of the satellite distribution
-is located on these figures.
+\section{Part 3. Linear Structure Growth}
 
 The file of the functions used for this exercise is:
 
-\lstinputlisting{three_a.py}
+\lstinputlisting{part_three.py}
 
-The result of this function is given by:
-
-%\lstinputlisting{3a.txt}
+The result of this function is shown in \ref{fig:lgf}:
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.9\linewidth]{./plots/satgals_m11.png}
-  \caption{Radial distribution of satellites in m11.txt}
-  \label{fig:m11}
+  \includegraphics[width=0.9\linewidth]{./plots/growth_factors.png}
+  \caption{Linear Growth Factors for different cases.}
+  \label{fig:lgf}
 \end{figure}
 
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/satgals_m12.png}
-  \caption{Radial distribution of satellites in m12.txt}
-  \label{fig:m12}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/satgals_m13.png}
-  \caption{Radial distribution of satellites in m13.txt}
-  \label{fig:m13}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/satgals_m14.png}
-  \caption{Radial distribution of satellites in m14.txt}
-  \label{fig:m14}
-\end{figure}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/satgals_m15.png}
-  \caption{Radial distribution of satellites in m15.txt}
-  \label{fig:m15}
-\end{figure}
-
-\section{Part 3.b Function Fitting}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{three_b.py}
-
-As in part a), for this part I did not successfully create an interpolator for a,b,and c based off the halo mass bin.
+As can be seen from the plot, the numerical solution is close the analtical solution, but not exact.
+The runge-kutta 4th order method was chosen for its ease of implementation and relative accuracy.

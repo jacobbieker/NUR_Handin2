@@ -56,36 +56,7 @@ def runge_kutta(diff_egn, r, t, h):
     k3 = h * diff_egn(r + k2 / 2, t + h / 2)
     k4 = h * diff_egn(r + k3, t + h)
 
-    return k1 / 6 + k2 / 3 + k3 / 3 + k4 / 6
-
-
-def error_estimate(y, y_star):
-    return abs(y - y_star)
-
-
-def solver(init, times):
-    """
-    Solves the ODE
-    :param init:
-    :param start:
-    :param end:
-    :param num_points:
-    :return:
-    """
-
-    # initial conditions
-    r = init
-    Ds = []
-    ys = []
-    step = times[1] - times[0]
-
-    # Solve ODE
-    for t in times:
-        Ds.append(r[0])
-        ys.append(r[1])
-        r = runge_kutta(second_order, r, t, step)
-
-    return Ds
+    return r + k1 / 6 + k2 / 3 + k3 / 3 + k4 / 6
 
 
 def D_analytic_solution(t, case):
@@ -111,10 +82,9 @@ def part_three():
     :param rand_gen:
     :return:
     """
-
-    H0 = 7.16e-11
-    Omega_0 = 1  # De-sitter Universe
-    times = np.linspace(1, 1000, 10000)
+    t = np.linspace(1, 1000, 10000)
+    D = np.zeros(len(t))
+    y = np.zeros(len(t))    # y = dD/dt
 
     case_one = [3, 2]
     case_two = [10, -10]
@@ -122,27 +92,26 @@ def part_three():
 
     cases = ([case_one, "case 1"], [case_two, "case 2"], [case_three, "case 3"])
     for i in range(len(cases)):
-        D = []
-        y = []
         #times, Ds = solver(cases[i][0], times)
-        y.append(cases[i][0][1])
-        D.append(cases[i][0][0])
+        D[0] = cases[i][0][0]
+        y[0] = cases[i][0][1]
 
-        h = times[1] - times[0]
+        h = t[1] - t[0]
 
-        for j in range(1, len(times)):
+        for j in range(1, len(t)):
             r = np.array([D[j-1], y[j-1]])
-            r = runge_kutta(diff_eqn, r, times[i-1], h)
-            D.append(r[0])
-            y.append(r[1])
+            r = runge_kutta(second_order, r, t[j-1], h)
+            D[j] = r[0]
+            y[j] = r[1]
 
-        plt.loglog(times, D, label=cases[i][1])
-        plt.loglog(times, D_analytic_solution(times, cases[i][1]), linestyle="--", label="Analytic {}".format(cases[i][1]))
+        plt.plot(t, D, label=cases[i][1])
+        plt.plot(t, D_analytic_solution(t, cases[i][1]), linestyle="--", label="Analytic {}".format(cases[i][1]))
 
     plt.title("Numerical and Analytic Solutions")
     plt.xlabel("Time (yr)")
     plt.ylabel("Linear Growth Factor D(t)")
     plt.legend(loc='best')
+    plt.loglog()
     plt.savefig("plots/growth_factors.png", dpi=300)
     plt.cla()
 

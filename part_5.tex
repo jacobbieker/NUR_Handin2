@@ -1,12 +1,39 @@
-\section{Part 2.a Numerical Integrator}
+\section{Part 5.a Nearest Grid Point Method}
 
 The file of the functions used for this exercise is:
 
-\lstinputlisting{two_a.py}
+\lstinputlisting{five_a.py}
 
 The result of this function is given by:
 
-\lstinputlisting{2a.txt}
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
+  \caption{The interpolation function in action.}
+  \label{fig:54}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
+  \caption{The interpolation function in action.}
+  \label{fig:59}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
+  \caption{The interpolation function in action.}
+  \label{fig:511}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\linewidth]{./plots/interpolation.png}
+  \caption{The interpolation function in action.}
+  \label{fig:514}
+\end{figure}
+
 
 \section{Part 2.b Interpolation}
 
@@ -24,93 +51,3 @@ the actual values, the interpolated values underestimate for all values between 
   \caption{The interpolation function in action.}
   \label{fig:interp}
 \end{figure}
-
-\section{Part 2.c Numerical Derivative}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_c.py}
-
-The result of this function is given by:
-
-\lstinputlisting{2c.txt}
-
-\section{Part 2.d Random Sampling}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_d.py}
-
-My script produces the following result, see Fig. \ref{fig:rand_sample}
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/random_sample.png}
-  \caption{The results of the random sample with rejection sampling.}
-  \label{fig:rand_sample}
-\end{figure}
-
-The positions in (r, $\phi$, $\theta$) are given by:
-
-\lstinputlisting{2d.txt}
-
-\section{Part 2.e 1000 Haloes}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_e.py}
-
-My script produces the following result, see Fig. \ref{fig:1000_haloes}. As can be seen, the generated galaxies mostly match
-the $N(x) = n(x)4\pi x^2$ distribution.
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/1000_haloes.png}
-  \caption{The results of 1000 haloes each with 100 satellites. }
-  \label{fig:1000_haloes}
-\end{figure}
-
-\section{Part 2.f Root Finding}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_f.py}
-
-The result of this function is given by:
-
-\lstinputlisting{2f.txt}
-
-\section{Part 2.g Percentiles and Poisson}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_g.py}
-
-The median, 16th, and 84th percentiles for the radial bin with the largest number of falaxies is given in:
-
-\lstinputlisting{2g.txt}
-
-My script produces the following result, see Fig. \ref{fig:hist_poisson}. As can be seen, histogram fairly closely follows
-the Poisson distribution with $\lambda$ equal to the mean number of galaxies in this radial bin.
-
-\begin{figure}[h!]
-  \centering
-  \includegraphics[width=0.9\linewidth]{./plots/hist_poisson.png}
-  \caption{The results of 1000 haloes each with 100 satellites. }
-  \label{fig:hist_poisson}
-\end{figure}
-
-\section{Part 2.h 3D interpolator}
-
-The file of the functions used for this exercise is:
-
-\lstinputlisting{two_h.py}
-
-While no output was requested, I did test the 3D interpolator, with the a,b,and c values generated earlier.
-The error is quite large for these, which I believe is a result of the linear interpolation used. Cubic splines took too
-long to run, and were expensive to create.
-
-\lstinputlisting{2h.txt}
-
-
-
