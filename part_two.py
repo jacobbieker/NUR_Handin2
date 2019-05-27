@@ -2,6 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def box_muller(rand_gen, num_samples):
+    """
+    Creates Gaussian sample using the uniform random generator
+    :param rand_gen:
+    :param num_samples:
+    :return:
+    """
     z1 = []
     z2 = []
     for _ in range(num_samples):
@@ -16,6 +22,13 @@ def box_muller(rand_gen, num_samples):
 
 
 def map_to_guass(x, u, sigma):
+    """
+    Maps a gaussian to a different mean and sigma
+    :param x:
+    :param u:
+    :param sigma:
+    :return:
+    """
     # First change variance
 
     x = x * sigma
@@ -27,6 +40,14 @@ def map_to_guass(x, u, sigma):
 
 
 def gauss_complex(rand_gen, num_samples, u=0, sigma=1):
+    """
+    Creating Complex numbers with normally distributed real and imaginary parts
+    :param rand_gen:
+    :param num_samples:
+    :param u:
+    :param sigma:
+    :return:
+    """
     real = box_muller(rand_gen, num_samples=num_samples)
     imaginary = box_muller(rand_gen, num_samples=num_samples)
     real = map_to_guass(real, u=u, sigma=sigma)
@@ -51,9 +72,9 @@ def power_spectrum(kx, ky, n):
 
 def part_two(rand_gen):
     """
-    Make an initial density field
+    Make an initial density field as a Gaussian Random Field
 
-    :param rand_gen:
+    :param rand_gen: Random number Generator
     :return:
     """
     grid_size = 1024
@@ -64,6 +85,7 @@ def part_two(rand_gen):
 
     # Now for each of the n's
     for n in [-1, -2, -3]:
+        # Use FFT for create a random field
         random_field = np.fft.fft2(box_muller(rand_gen, grid_size ** 2).reshape((grid_size, grid_size)))
 
         # Make the amplitude matrix
@@ -71,7 +93,7 @@ def part_two(rand_gen):
             for j in range(int(grid_size)):
                 amplitudes[j + i * grid_size] = power_spectrum(kx[i], ky[j], n)
 
-        # convert to what we want
+        # convert to what we want, the standard dev by multiplying by the power spectrum law
         random_field = random_field.reshape(-1)
         random_field = random_field * amplitudes
         # Reshape back to the grid and do the fft
