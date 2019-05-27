@@ -27,18 +27,20 @@ def map_to_guass(x, u, sigma):
 
     return x
 
+
 def common_test(points, func):
     """
-    Calcs KS test with Scipy's norm
+    Common part for Kuiper and KS Test
     :param points:
     :return:
     """
-    number_of_bins = int(200*(max(points) - min(points)))
+    number_of_bins = int(100 * (max(points) - min(points)))
     values, bins = np.histogram(points, bins=number_of_bins)
     bin_width = bins[1] - bins[0]
     bins += bin_width
 
     return func(points, values, bins)
+
 
 def one_c(rand_gen):
     """
@@ -50,36 +52,33 @@ def one_c(rand_gen):
     # Now need to do the ks test
     # This calculates the value for KS at given points
     def ks_test(z):
-        #for i in range(len(z)):
         if z == 0:
             return 1
-        elif z < 1.18: # Numerically optimal cutoff
-            block = ((np.exp((-1.*np.pi**2) / (8 * z ** 2))))
-            p_ks = (np.sqrt(2*np.pi) / z) * \
-                   (block + block**9 + block**25)
+        elif z < 1.18:  # Numerically optimal cutoff
+            block = ((np.exp((-1. * np.pi ** 2) / (8 * z ** 2))))
+            p_ks = (np.sqrt(2 * np.pi) / z) * \
+                   (block + block ** 9 + block ** 25)
         else:
             block = np.exp(-2 * z ** 2)
-            p_ks = 1 - 2*(block - block**4 + block**9)
+            p_ks = 1 - 2 * (block - block ** 4 + block ** 9)
         return 1 - p_ks
 
     def ks_test_part(points, values, bins):
         summed_bins = sum(values)
         distribution = []
         for i in range(len(values)):
-            distribution.append(abs(sum(values[:i])/summed_bins - norm.cdf(bins[i])))
+            distribution.append(abs(sum(values[:i]) / summed_bins - norm.cdf(bins[i])))
 
         distribution = np.asarray(distribution)
 
         D = max(abs(distribution))
-        z = D*(np.sqrt(len(points)) + 0.12 + 0.11/np.sqrt(len(points)))
+        z = D * (np.sqrt(len(points)) + 0.12 + 0.11 / np.sqrt(len(points)))
 
         return D, ks_test(z)
 
     sigma = 1
     u = 0
-    probs = []
-    real_probs = []
-    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=50)
+    num_samples = np.logspace(np.log10(10), np.log10(10 ** 5), num=50)
     reference_ks = np.zeros(50)
     reference_p_value = np.zeros(50)
     ks = np.zeros(50)

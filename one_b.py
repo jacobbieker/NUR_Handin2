@@ -3,6 +3,12 @@ import matplotlib.pyplot as plt
 
 
 def box_muller(rand_gen, num_samples):
+    """
+    Implementation of Box-Muller
+    :param rand_gen:
+    :param num_samples:
+    :return:
+    """
     z1 = []
     z2 = []
     for _ in range(num_samples):
@@ -27,12 +33,6 @@ def map_to_guass(x, u, sigma):
     return x
 
 
-def normpdf(x):
-    top = np.exp(-x ** 2 / 2)
-    bottom = np.sqrt(2 * np.pi)
-    return top / bottom
-
-
 def one_b(rand_gen):
     """
     Box Muller Method
@@ -45,6 +45,13 @@ def one_b(rand_gen):
     gauss = map_to_guass(gauss, u=u, sigma=sigma)
 
     def gaussian(x, u=0, variance=1.):
+        """
+        Equation for the Gaussian PDF
+        :param x:
+        :param u:
+        :param variance:
+        :return:
+        """
         return 1 / (np.sqrt(2 * np.pi * variance)) * np.exp(-(x - u) ** 2 / (2 * variance))
 
     pdf_x = np.linspace(u - 5 * sigma, u + 5 * sigma, 10000)

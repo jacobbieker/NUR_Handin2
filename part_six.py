@@ -236,12 +236,8 @@ def part_six():
     # Histogram over the whole thing
     # Create histogram with 0 or 1 for the actual classes
     hist_labels = int(labels is True)
-    predict_labels = int(predict_labels > 0.5)
+    #predict_labels = int(predict_labels > 0.5)
     plt.hist(predict_labels, bins=10, label="Predicted Labels")
     plt.hist(hist_labels, bins=10, histtype='step', label="True Labels")
-    plt.savefig("plots/gammaRay.png", dpi=300)
+    plt.savefig("plots/GRB_Histogram.png", dpi=300)
     plt.cla()
-
-
-
-part_six()

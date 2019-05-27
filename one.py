@@ -6,6 +6,7 @@ from one_c import one_c
 from one_d import one_d
 from one_e import one_e
 
+
 def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=4, a4=4294957665):
     """
         Generates psuedorandom numbers with a combination of (M)LCC, 64 bit shift, and MWC

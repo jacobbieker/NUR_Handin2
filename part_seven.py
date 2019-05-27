@@ -2,6 +2,7 @@ import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import patches
+import sys
 
 
 class Particle(object):
@@ -26,6 +27,12 @@ class BHNode:
         self.generate_quadrants(limit=12)
 
     def plot(self, xlabel='', ylabel=''):
+        """
+        Plots the BH Tree
+        :param xlabel:
+        :param ylabel:
+        :return:
+        """
         fig, ax = plt.subplots(1, figsize=(7, 7))
         plt.xlim(self.center[0] - self.length / 2, self.center[0] + self.length / 2)
         plt.ylim(self.center[1] - self.length / 2, self.center[1] + self.length / 2)
@@ -39,7 +46,7 @@ class BHNode:
         ax.scatter(x, y, s=1)
 
         for child in children:
-            ax.add_patch(patches.Rectangle((child.center - (child.length/2)), child.length, child.length, fill=False))
+            ax.add_patch(patches.Rectangle((child.center - (child.length / 2)), child.length, child.length, fill=False))
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
@@ -61,10 +68,16 @@ class BHNode:
         """
         print("At (X,Y): {} Size: {} n = 0 moment: {}".format(self.center, self.length, self.moment))
         if self.parent is not None:
-            self.parent.work_up_tree() # Go up to the next level
-
+            self.parent.work_up_tree()  # Go up to the next level
 
     def get_children(self):
+        """
+        Gets all the children of this node and returns them, includes all children of children
+
+        On the root node, it would return all children in the tree
+
+        :return:
+        """
         children = []
 
         if self.is_leaf:
@@ -87,7 +100,8 @@ class BHNode:
             if self.particles[i].id == id:
                 if self.particles[i].node.is_leaf:
                     # Start here and work way back up
-                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.particles[i].id, self.particles[i].position,
+                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.particles[i].id,
+                                                                          self.particles[i].position,
                                                                           self.particles[i].node.moment))
                     # Now work back up to top of tree
                     self.particles[i].node.work_up_tree()
@@ -154,7 +168,7 @@ class BHNode:
                                                     parent=self))
                     elif (i, j) == (1, 0):
                         self.children.append(BHNode(center=self.center + dx,
-                                                    length= self.length / 2,
+                                                    length=self.length / 2,
                                                     particles=upper_lpart,
                                                     parent=self))
 
@@ -167,6 +181,7 @@ class BHNode:
 
 # Now run the Part 7 stuff
 def part_seven():
+    sys.stdout = open('7.txt', 'w')
     with h5py.File('colliding.hdf5', 'r') as f:
         f = f['PartType4']
         coords = f['Coordinates'][:]
@@ -188,6 +203,3 @@ def part_seven():
 
     BHTree.get_point(id_100)
     BHTree.plot("X Coordinate", "Y Coordinate")
-
-
-part_seven()

@@ -3,18 +3,20 @@ import matplotlib.pyplot as plt
 from scipy.stats import kstest, norm
 from astropy.stats import kuiper as kuiper_reference
 
+
 def common_test(points, func):
     """
-    Calcs KS test with Scipy's norm
+    Common code to KS Test and Kuiper Test
     :param points:
     :return:
     """
-    number_of_bins = int(200*(max(points) - min(points)))
+    number_of_bins = int(100 * (max(points) - min(points)))
     values, bins = np.histogram(points, bins=number_of_bins)
     bin_width = bins[1] - bins[0]
     bins += bin_width
 
     return func(points, values, bins)
+
 
 def box_muller(rand_gen, num_samples):
     z1 = []
@@ -40,6 +42,7 @@ def map_to_guass(x, u, sigma):
 
     return x
 
+
 def one_d(rand_gen):
     """
     Do Kuiper's test on the function
@@ -57,25 +60,25 @@ def one_d(rand_gen):
         if z < 0.4:
             return 1
         else:
-            block = np.exp(-2*(z**2))
-            return 2 *((4*(z**2-1))*block + (16*z**2-1)*block**4 + (32*z**2-1)*block**9)
+            block = np.exp(-2 * (z ** 2))
+            return 2 * ((4 * (z ** 2 - 1)) * block + (16 * z ** 2 - 1) * block ** 4 + (32 * z ** 2 - 1) * block ** 9)
 
     def kuiper_test_part(points, values, bins):
         summed_bins = sum(values)
         distribution = []
         for i in range(len(values)):
-            distribution.append(abs(sum(values[:i])/summed_bins - norm.cdf(bins[i])))
+            distribution.append(abs(sum(values[:i]) / summed_bins - norm.cdf(bins[i])))
 
         distribution = np.asarray(distribution)
 
         V = abs(max(distribution)) + abs(min(distribution))
-        z = V*(np.sqrt(len(points)) + 0.155 + 0.24/np.sqrt(len(points)))
+        z = V * (np.sqrt(len(points)) + 0.155 + 0.24 / np.sqrt(len(points)))
 
         return V, kuiper(z)
 
     sigma = 1
     u = 0
-    num_samples = np.logspace(np.log10(10), np.log10(10**5), num=50)
+    num_samples = np.logspace(np.log10(10), np.log10(10 ** 5), num=50)
     reference_ks = np.zeros(50)
     reference_p_value = np.zeros(50)
     test = np.zeros(50)

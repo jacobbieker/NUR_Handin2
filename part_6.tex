@@ -4,9 +4,11 @@ The file of the functions used for this exercise is:
 
 \lstinputlisting{part_six.py}
 
-The result of this function is shown in
-
-\lstinputlisting{6.txt}
+The result of this function is shown in Figures \ref{fig:mse}, \ref{fig:misclassify}, \ref{fig:predction}.
+Figure \ref{fig:mse} shows the Mean Square Error for the 10 epochs of training that were run on this code. The network as a whole
+takes a lot longer to train, but would take too long for the 10 minute limit, and so the pre-trained weights are loaded from disk and
+only trained for slightly longer. Figure \ref{fig:misclassify} is similar for the misclassification of the training examples. In this case,
+all exampels were used for training.
 
 \begin{figure}[h!]
   \centering
@@ -24,7 +26,7 @@ The result of this function is shown in
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.9\linewidth]{./plots/GRB_histogram.png}
+  \includegraphics[width=0.9\linewidth]{./plots/GRB_Histogram.png}
   \caption{GRB Histogram Real Class vs Predicted}
   \label{fig:predction}
 \end{figure}
@@ -32,10 +34,14 @@ The result of this function is shown in
 As can be seen in \ref{fig:predction}, the logistic regression does not do a great
 job of separating the two classes, and there does not seem to be enough
 information for the network to properly learn a hyperplane that can
-separate the two classes.
+separate the two classes. The histogram shows the distribution of class labels for the
+predictions, so we can see the number of correct classifications depends on what we use as the
+confidence cut to say a GRB is long or short.
 
 Additionally, the network requires a long time to train, so the
 weights are loaded from the disk from a previous training run. Missing data is not
 changed at all, with the idea that the network will learn to ignore the -1. values as not
-being correlated with the short or long classification.
+being correlated with the short or long classification. From the Universal Approximation Function,
+neural networks can approximate any function, and so this network could theoretically learn to differentiate between
+the long and short GRBs given enough time, or enough examples, which were not available for this project.
 

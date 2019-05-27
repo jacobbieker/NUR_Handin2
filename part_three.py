@@ -114,6 +114,3 @@ def part_three():
     plt.loglog()
     plt.savefig("plots/growth_factors.png", dpi=300)
     plt.cla()
-
-
-part_three()
