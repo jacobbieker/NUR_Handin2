@@ -18,7 +18,7 @@ class BHNode:
         self.center = center
         self.length = length
         self.children = []
-        self.points = particles
+        self.particles = particles
         self.parent = parent
         self.is_leaf = False
         self.moment = 0
@@ -33,8 +33,8 @@ class BHNode:
         # Get children
         children = self.get_children()
 
-        x = [particle.position[0] for particle in self.points]
-        y = [particle.position[1] for particle in self.points]
+        x = [particle.position[0] for particle in self.particles]
+        y = [particle.position[1] for particle in self.particles]
 
         ax.scatter(x, y, s=1)
 
@@ -47,7 +47,7 @@ class BHNode:
         plt.cla()
 
     def calc_multipole(self):
-        for point in self.points:
+        for point in self.particles:
             self.moment += point.mass
 
         if not self.is_leaf:
@@ -56,7 +56,7 @@ class BHNode:
 
     def work_up_tree(self):
         """
-        Goes from current node up to the top of the tree
+        Goes from current node up to the top of the tree, printing out the stuff along the way
         :return:
         """
         print("At (X,Y): {} Size: {} n = 0 moment: {}".format(self.center, self.length, self.moment))
@@ -78,19 +78,19 @@ class BHNode:
 
     def get_point(self, id):
         """
-        Want to do Breadth First
+        Goes through all particles, getting the node with that ID
         :param id:
         :return:
         """
 
-        for i in range(len(self.points)):
-            if self.points[i].id == id:
-                if self.points[i].node.is_leaf:
+        for i in range(len(self.particles)):
+            if self.particles[i].id == id:
+                if self.particles[i].node.is_leaf:
                     # Start here and work way back up
-                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.points[i].id, self.points[i].position,
-                                                                            self.points[i].node.moment))
+                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.particles[i].id, self.particles[i].position,
+                                                                          self.particles[i].node.moment))
                     # Now work back up to top of tree
-                    self.points[i].node.work_up_tree()
+                    self.particles[i].node.work_up_tree()
 
     def generate_quadrants(self, limit=12):
         """
@@ -99,17 +99,17 @@ class BHNode:
         :param leaves:
         :return:
         """
-        if len(self.points) == 0:
+        if len(self.particles) == 0:
             self.is_leaf = True
             return
 
-        elif int(len(self.points)) <= limit:
+        elif int(len(self.particles)) <= limit:
             self.is_leaf = True
-            for part in self.points:
+            for part in self.particles:
                 part.node = self
             return
 
-        elif len(self.points) > limit:
+        elif len(self.particles) > limit:
             lower_lpart = []
             lower_rpart = []
             upper_rpart = []
@@ -122,9 +122,8 @@ class BHNode:
             upper_right = (origin[0] + dx, origin[0] + 2 * dx, origin[1] + dx, origin[1] + 2 * dx)
             upper_left = (origin[0], origin[0] + dx, origin[1] + dx, origin[1] + 2 * dx)
 
-            for _, part in enumerate(self.points):
+            for _, part in enumerate(self.particles):
                 position = part.position
-                # To reduce overlap
                 if lower_left[0] <= position[0] < lower_left[1] and lower_left[2] <= position[1] < lower_left[3]:
                     lower_lpart.append(part)
                 elif lower_right[0] <= position[0] <= lower_right[1] and lower_right[2] <= position[1] < lower_right[3]:
@@ -138,7 +137,6 @@ class BHNode:
             for i in range(2):
                 for j in range(2):
                     dx = 0.5 * self.length * (np.array([i, j]) - 0.5)  # offset between parent and child box centers
-                    #print(self.center + dx)
                     if (i, j) == (0, 0):
                         self.children.append(BHNode(center=self.center + dx,
                                                     length=self.length / 2,
