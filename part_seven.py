@@ -1,6 +1,7 @@
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import patches
 
 
 class OctNode:
@@ -73,10 +74,26 @@ class BHNode:
 
         self.generate_quadrants(limit=12)
 
-    def plot(self, xlabel='', ylabel='', filename="plots/bhtree.png", save=False):
+    def plot(self, xlabel='', ylabel=''):
         fig, ax = plt.subplots(1, figsize=(7, 7))
         plt.xlim(self.center[0] - self.length / 2, self.center[0] + self.length / 2)
         plt.ylim(self.center[1] - self.length / 2, self.center[1] + self.length / 2)
+
+        # Get children
+        children = self.get_children()
+
+        x = [particle.position[0] for particle in self.points]
+        y = [particle.position[1] for particle in self.points]
+
+        ax.scatter(x, y, s=1)
+
+        for child in children:
+            ax.add_patch(patches.Rectangle((child.center - (child.length/2)), child.length, child.length, fill=False))
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+
+        plt.savefig("plots/bhtree.png", dpi=300)
+        plt.cla()
 
     def calc_multipole(self):
         for point in self.points:
@@ -95,6 +112,18 @@ class BHNode:
         if self.parent is not None:
             self.parent.work_up_tree() # Go up to the next level
 
+
+    def get_children(self):
+        children = []
+
+        if self.is_leaf:
+            children.append(self)
+
+        else:
+            for child in self.children:
+                children += child.get_children()
+
+        return children
 
     def get_point(self, id):
         """
@@ -214,6 +243,7 @@ def part_seven():
     id_100 = particles[100].id
 
     BHTree.get_point(id_100)
+    BHTree.plot("X Coordinate", "Y Coordinate")
 
 
 part_seven()
