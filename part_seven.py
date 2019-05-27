@@ -86,6 +86,16 @@ class BHNode:
             for child in self.children:
                 child.calc_multipole()
 
+    def work_up_tree(self):
+        """
+        Goes from current node up to the top of the tree
+        :return:
+        """
+        print("At (X,Y): {} Size: {} n = 0 moment: {}".format(self.center, self.length, self.moment))
+        if self.parent is not None:
+            self.parent.work_up_tree() # Go up to the next level
+
+
     def get_point(self, id):
         """
         Want to do Breadth First
@@ -96,13 +106,11 @@ class BHNode:
         for i in range(len(self.points)):
             if self.points[i].id == id:
                 if self.points[i].node.is_leaf:
+                    # Start here and work way back up
                     print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.points[i].id, self.points[i].position,
                                                                             self.points[i].node.moment))
-                else:
-                    print("At Node {}: (X,Y): {} n = 0 moment: {}".format(self.points[i].id, self.points[i].position,
-                                                                          self.points[i].node.moment))
-                    for child in self.points[i].node.children:
-                        child.get_point(id)
+                    # Now work back up to top of tree
+                    self.points[i].node.work_up_tree()
 
     def generate_quadrants(self, limit=12):
         """
