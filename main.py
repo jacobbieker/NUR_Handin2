@@ -4,6 +4,7 @@ from part_three import part_three
 from four import all_four
 from part_six import part_six
 from part_seven import part_seven
+import matplotlib.pyplot as plt
 
 import time
 import sys
@@ -20,17 +21,23 @@ rand_gen = random_generator(seed)
 
 print("Start All One")
 all_one(rand_gen)
+plt.cla()
 print("End All One")
 part_two(rand_gen)
+plt.cla()
 print("End Part 2")
 
 # Now do multiprocessing as these can take awhile
 part_three()
+plt.cla()
 print("End Part 3")
 all_four()
+plt.cla()
 print("End Part 4")
 #part_six()
+plt.cla()
 part_seven()
+plt.cla()
 print("End Part 7")
 
 end = time.time()

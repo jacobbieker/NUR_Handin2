@@ -71,7 +71,7 @@ def part_b():
         """
         return 5 * Omega_M / 2 * (Omega_M / a ** 3 + Omega_Lambda) ** (1 / 2) * A
 
-    def differentiate_point(func, b, eps=1e-12):
+    def differentiate_point(func, b, A, eps=1e-12):
         """
         Numerical differentiation at point
         :param func:
@@ -80,11 +80,11 @@ def part_b():
         :return:
         """
         h = 0.01
-        dydx = (func(b + h / 2) - func(b - h / 2)) / h
+        dydx = (func(b + h / 2, A) - func(b - h / 2, A)) / h
 
         while True:
             h = h / 2
-            d = (func(b + h / 2) - func(b - h / 2)) / h
+            d = (func(b + h / 2, A) - func(b - h / 2, A)) / h
             if abs(d - dydx) < eps:
                 return d
             else:
@@ -104,5 +104,5 @@ def part_b():
     D_prime = -15 / 4 * Omega_M ** 2 * H0 * A / a_final ** 3
     print('First derivative of Linear Growth Factor at z = 50 (a = 1/51): {:.8e}'.format(D_prime))
 
-    D_prime_numerical = a_final * H(1 / a_final - 1) * differentiate_point(D_a, b=a_final, eps=1e-13)
+    D_prime_numerical = a_final * H(1 / a_final - 1) * differentiate_point(D_a, b=a_final, eps=1e-13, A=A)
     print('First derivative of Linear Growth Factor at z = 50 (a = 1/51), numerical: {:.8e}'.format(D_prime_numerical))

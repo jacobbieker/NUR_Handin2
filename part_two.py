@@ -79,9 +79,9 @@ def part_two(rand_gen):
     """
     grid_size = 1024
     # Create kx, ky grid points lists
-    kx = [i for i in range(-511, 512, step=1)]
-    ky = [i for i in range(-511, 512, step=1)]
-    amplitudes = np.zeros((grid_size, grid_size))
+    kx = [i for i in range(-511, 513)]
+    ky = [i for i in range(-511, 513)]
+    amplitudes = np.zeros((grid_size**2)) # vector of the amplitudes for the whole grid
 
     # Now for each of the n's
     for n in [-1, -2, -3]:
@@ -94,15 +94,17 @@ def part_two(rand_gen):
                 amplitudes[j + i * grid_size] = power_spectrum(kx[i], ky[j], n)
 
         # convert to what we want, the standard dev by multiplying by the power spectrum law
-        random_field = random_field.reshape(-1)
+        random_field = random_field.reshape(-1) # Need to be a line to work
         random_field = random_field * amplitudes
         # Reshape back to the grid and do the fft
-        random_field = np.fft.ifft2(random_field.reshape((grid_size, grid_size)))
+        random_field = np.fft.ifft2(random_field.reshape((grid_size, grid_size))) # converts back to the square grid
 
-        im = plt.matshow(np.absolute(random_field))
+        im = plt.imshow(np.absolute(random_field))
         plt.xlabel("x (kpc)")
         plt.ylabel("y (kpc)")
         plt.title("Gaussian Random Field n = {}".format(n))
-        plt.colorbar(im, label="Absolute value of k")
-        plt.savefig("plots/GaussianField_{}.png".format(n), dpi=300)
+        plt.colorbar(im, label="abs(K)")
+        plt.savefig("plots/GaussianField{}.png".format(n), dpi=300)
+        plt.tight_layout()
         plt.cla()
+        plt.close()

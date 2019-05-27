@@ -50,7 +50,12 @@ def random_generator(seed, m=2 ** 64 - 1, a=2349543, c=913842, a1=21, a2=35, a3=
 
 def all_one(rand_gen):
     one_a(rand_gen)
+    plt.cla()
     one_b(rand_gen)
+    plt.cla()
     one_c(rand_gen)
+    plt.cla()
     one_d(rand_gen)
+    plt.cla()
     one_e(rand_gen)
+    plt.cla()

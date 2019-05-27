@@ -54,8 +54,8 @@ class BHNode:
         plt.cla()
 
     def calc_multipole(self):
-        for point in self.particles:
-            self.moment += point.mass
+        for particle in self.particles:
+            self.moment += particle.mass
 
         if not self.is_leaf:
             for child in self.children:
@@ -89,7 +89,7 @@ class BHNode:
 
         return children
 
-    def get_point(self, id):
+    def get_particle(self, id):
         """
         Goes through all particles, getting the node with that ID
         :param id:
@@ -173,7 +173,7 @@ class BHNode:
                                                     parent=self))
 
             for child in self.children:
-                if len(child.points) > limit:
+                if len(child.particles) > limit:
                     child.generate_quadrants(limit=12)
 
         return self
@@ -201,5 +201,5 @@ def part_seven():
 
     id_100 = particles[100].id
 
-    BHTree.get_point(id_100)
+    BHTree.get_particle(id_100)
     BHTree.plot("X Coordinate", "Y Coordinate")
