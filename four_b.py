@@ -1,10 +1,6 @@
 import numpy as np
 import sys
 
-H0 = 7.16e-11
-Omega_M = 0.3
-Omega_Lambda = 0.7
-
 
 def integration_alg(func, lower_bound, upper_bound, number_of_steps):
     """
@@ -42,6 +38,9 @@ def integration_alg(func, lower_bound, upper_bound, number_of_steps):
 
 
 def part_b():
+    H0 = 7.16e-11
+    Omega_M = 0.3
+    Omega_Lambda = 0.7
 
     def a_from_z(z):
         """
@@ -49,7 +48,7 @@ def part_b():
         :param z:
         :return:
         """
-        return 1/(z+1)
+        return 1 / (z + 1)
 
     def growth_factor_a(a):
         """
@@ -65,7 +64,7 @@ def part_b():
         :param a:
         :return:
         """
-        return H0 * np.sqrt(Omega_M * (1/a) ** 3 + Omega_Lambda)
+        return H0 * np.sqrt(Omega_M * (1 / a) ** 3 + Omega_Lambda)
 
     def D_a(a, integral):
         """
@@ -87,21 +86,23 @@ def part_b():
         """
 
         h = 0.01
+
         # First step
         def calc_deriv():
             return (func(b + h / 2, integral) - func(b - h / 2, integral)) / h
+
         prev_deriv = calc_deriv()
 
         while True:
-            h = h / 2 # Cut step size in half each iteration
+            h = h / 2  # Cut step size in half each iteration
             deriv = calc_deriv()
-            if abs(deriv - prev_deriv) < eps: # Means it has converged
+            if abs(deriv - prev_deriv) < eps:  # Means it has converged
                 return deriv
             else:
                 prev_deriv = deriv
 
     a0 = 0
-    final_a = a_from_z(50) # z = 50, a = 1/(z+1) (z+1) = 1/a
+    final_a = a_from_z(50)  # z = 50, a = 1/(z+1) (z+1) = 1/a
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     sys.stdout = open('4b.txt', 'w')
     numerical_deriv = final_a * H(final_a) * differentiate_alg(D_a, b=final_a, integral=integral)

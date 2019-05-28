@@ -2,11 +2,6 @@ import numpy as np
 import sys
 
 
-H0 = 7.16e-11
-Omega_M = 0.3
-Omega_Lambda = 0.7
-
-
 def integration_alg(func, lower_bound, upper_bound, number_of_steps):
     """
 
@@ -43,6 +38,8 @@ def integration_alg(func, lower_bound, upper_bound, number_of_steps):
 
 
 def part_four_a():
+    Omega_M = 0.3
+    Omega_Lambda = 0.7
 
     def growth_factor_a(a):
         """
@@ -50,7 +47,7 @@ def part_four_a():
         :param a:
         :return:
         """
-        return (1/a**3)/(Omega_M/a**3 + Omega_Lambda)**(3/2)
+        return (1 / a ** 3) / (Omega_M / a ** 3 + Omega_Lambda) ** (3 / 2)
 
     def a_from_z(z):
         """
@@ -58,13 +55,13 @@ def part_four_a():
         :param z:
         :return:
         """
-        return 1/(z+1)
+        return 1 / (z + 1)
 
     a0 = 0
-    final_a = a_from_z(50) # z = 50, a = (z+1)
+    final_a = a_from_z(50)  # z = 50, a = (z+1)
     sys.stdout = open('4a.txt', 'w')
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     print("Integral value for the Integrand: {}".format(integral))
 
-    lgf = 5*Omega_M/2*np.sqrt(Omega_M/final_a**3 + Omega_Lambda)*integral
+    lgf = 5 * Omega_M / 2 * np.sqrt(Omega_M / final_a ** 3 + Omega_Lambda) * integral
     print("Linear growth factor at z = 50: {}".format(lgf))
