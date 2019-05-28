@@ -37,6 +37,33 @@ def integration_alg(func, lower_bound, upper_bound, number_of_steps):
     return integration_value
 
 
+def differentiation_alg(func, b, integral, eps=1e-12):
+    """
+    Numerical differentiation at point by calculating deriviative at a point and halving step size
+
+    :param func:
+    :param b:
+    :param eps:
+    :return:
+    """
+
+    h = 0.01
+
+    # First step
+    def calc_deriv():
+        return (func(b + h / 2, integral) - func(b - h / 2, integral)) / h
+
+    prev_deriv = calc_deriv()
+
+    while True:
+        h = h / 2  # Cut step size in half each iteration
+        deriv = calc_deriv()
+        if abs(deriv - prev_deriv) < eps:  # Means it has converged
+            return deriv
+        else:
+            prev_deriv = deriv
+
+
 def part_b():
     H0 = 7.16e-11
     Omega_M = 0.3
@@ -50,9 +77,9 @@ def part_b():
         """
         return 1 / (z + 1)
 
-    def growth_factor_a(a):
+    def integrand(a):
         """
-        Growth Factor with a
+        Integrand for the LGF
         :param a:
         :return:
         """
@@ -75,37 +102,11 @@ def part_b():
         """
         return 5 * Omega_M / 2 * (Omega_M / a ** 3 + Omega_Lambda) ** (1 / 2) * integral
 
-    def differentiate_alg(func, b, integral, eps=1e-12):
-        """
-        Numerical differentiation at point by calculating deriviative at a point and halving step size
-
-        :param func:
-        :param b:
-        :param eps:
-        :return:
-        """
-
-        h = 0.01
-
-        # First step
-        def calc_deriv():
-            return (func(b + h / 2, integral) - func(b - h / 2, integral)) / h
-
-        prev_deriv = calc_deriv()
-
-        while True:
-            h = h / 2  # Cut step size in half each iteration
-            deriv = calc_deriv()
-            if abs(deriv - prev_deriv) < eps:  # Means it has converged
-                return deriv
-            else:
-                prev_deriv = deriv
-
     a0 = 0
     final_a = a_from_z(50)  # z = 50, a = 1/(z+1) (z+1) = 1/a
-    integral = integration_alg(growth_factor_a, a0, final_a, 20000)
+    integral = integration_alg(integrand, a0, final_a, 20000)
     sys.stdout = open('4b.txt', 'w')
-    numerical_deriv = final_a * H(final_a) * differentiate_alg(D_a, b=final_a, integral=integral)
+    numerical_deriv = final_a * H(final_a) * differentiation_alg(D_a, b=final_a, integral=integral)
     print('Numerical d/da of Linear Growth Factor at z = 50: {}'.format(numerical_deriv))
     analytic_deriv = -15 / 4 * Omega_M ** 2 * H0 * integral / final_a ** 3
     print('Analytical d/da of Linear Growth Factor at z = 50: {}'.format(analytic_deriv))
