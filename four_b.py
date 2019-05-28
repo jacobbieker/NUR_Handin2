@@ -95,13 +95,6 @@ def part_b():
             else:
                 prev_deriv = deriv
 
-    def linear_growth_factor(z):
-        return (5 * Omega_m * H0 ** 2) / 2 * ((H0 ** 2) * (Omega_m * ((1 + z) ** 3) + Omega_lambda)) ** 0.5
-
-    def operand(z_prime):
-        return (1 / z_prime ** 2) * (1 + 1 / z_prime) / (
-                    (H0 ** 2) * (Omega_m * (1 + z_prime) ** 3 + Omega_lambda)) ** 1.5
-
     a0 = 0
     final_a = 1 / 51 # z = 50, a = (z+1)
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
