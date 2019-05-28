@@ -1,15 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-
+from one import random_generator
 
 def common_test(points, func):
     """
-    Common test
+    Common test part for KS and Kuiper Test
     :param points:
     :return:
     """
-    number_of_bins = int(200 * (max(points) - min(points)))
+    number_of_bins = int(100 * (max(points) - min(points)))
     values, bins = np.histogram(points, bins=number_of_bins)
     bin_width = bins[1] - bins[0]
     bins += bin_width
@@ -114,3 +114,5 @@ def one_e(rand_gen):
     plt.legend(loc='best')
     plt.savefig("plots/KStest_pvalue.png", dpi=300)
     plt.cla()
+
+one_e(random_generator(5227))

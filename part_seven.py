@@ -33,7 +33,7 @@ class BHNode:
         :param ylabel:
         :return:
         """
-        fig, ax = plt.subplots(1, figsize=(7, 7))
+        fig, ax = plt.subplots(1, figsize=(10, 10))
         plt.xlim(self.center[0] - self.length / 2, self.center[0] + self.length / 2)
         plt.ylim(self.center[1] - self.length / 2, self.center[1] + self.length / 2)
 
@@ -52,6 +52,7 @@ class BHNode:
 
         plt.savefig("plots/bhtree.png", dpi=300)
         plt.cla()
+        plt.close()
 
     def calc_multipole(self):
         for particle in self.particles:
@@ -136,7 +137,7 @@ class BHNode:
             upper_right = (origin[0] + dx, origin[0] + 2 * dx, origin[1] + dx, origin[1] + 2 * dx)
             upper_left = (origin[0], origin[0] + dx, origin[1] + dx, origin[1] + 2 * dx)
 
-            for _, part in enumerate(self.particles):
+            for part in self.particles: # Goes through and puts the particles in each correct quadrant
                 position = part.position
                 if lower_left[0] <= position[0] < lower_left[1] and lower_left[2] <= position[1] < lower_left[3]:
                     lower_lpart.append(part)

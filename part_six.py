@@ -136,7 +136,10 @@ def predict(weights, x, y):
         x2 = input_value[1]
         y_true = y[index]
         output = xor_net(x1, x2, weights)
-        x_predict.append(output)
+        if output > 0.5:
+            x_predict.append(True)
+        else:
+            x_predict.append(False)
 
     return x_predict, y
 
@@ -214,12 +217,19 @@ def part_six():
     # If weights exist, load them, train for less time
     try:
         weights = np.load("weights.npy")
-        weights, iterations, mserror, misclassified = train_network(9, training_data, labels, weights=weights)
+        iterations = np.load("iterations.npy")
+        mserror = np.load("mserror.npy")
+        misclassified = np.load("misclassified.npy")
+
+        #weights, iterations, mserror, misclassified = train_network(9, training_data, labels, weights=weights)
     except:
         weights, iterations, mserror, misclassified = train_network(9, training_data, labels)
-
-    # Save weights for use later with loading
-    np.save("weights.npy", weights)
+        # Save weights for use later with loading
+        np.save("weights.npy", weights)
+        # Save training data and iterations
+        np.save("iterations.npy", iterations)
+        np.save("mserror.npy", mserror)
+        np.save("misclassified.npy", misclassified)
 
     plt.plot(iterations, mserror)
     plt.xlabel("Iteration")
@@ -235,8 +245,9 @@ def part_six():
     predict_labels, labels = predict(weights, training_data, labels)
     # Histogram over the whole thing
     # Create histogram with 0 or 1 for the actual classes
+
     hist_labels = int(labels is True)
-    #predict_labels = int(predict_labels > 0.5)
+    predict_labels = int(predict_labels is True)
     plt.hist(predict_labels, bins=10, label="Predicted Labels")
     plt.hist(hist_labels, bins=10, histtype='step', label="True Labels")
     plt.savefig("plots/GRB_Histogram.png", dpi=300)
