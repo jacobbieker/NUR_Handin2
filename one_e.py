@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
-def common_test(points, func):
+def common_test(points, my_points, func):
     """
     Common test part for KS and Kuiper Test
     :param points:
@@ -10,8 +10,9 @@ def common_test(points, func):
     """
     number_of_bins = 100
     values, bins = np.histogram(points, bins=number_of_bins)
+    my_values = my_points
 
-    return func(points, values, bins)
+    return func(points, values, bins,  my_values)
 
 
 def box_muller(rand_gen, num_samples):
@@ -45,24 +46,59 @@ def one_e(rand_gen):
     :param rand_gen:
     :return:
     """
+    def bisect(arr, value):
+        """
+        Finds the index in the array closest to value
+        :param arr: The array of values
+        :param value: The value to insert/the interpolation value
+        :return: Index of insertion point for the value in a sorted array
+        """
+
+        low = 0
+        high = len(arr)
+        while low < high:
+            mid = int((low + high) / 2)  # Get the midpoint to test if the value is above or below it
+            if value < arr[mid]:
+                high = mid
+            else:
+                low = mid + 1
+        return low
+
+    def cdf(value, points):
+        """
+        Computes CDF of points up to value
+        :param values: Value to get the Cumsum at
+        :param points:
+        :return:
+        """
+        points = sorted(points) # Sort the points, so they are increasing
+        # Could have used sorting method from last handin, but out of time
+        cum_fun = np.asarray(list(range(len(points))))/len(points)
+
+        # Now the index into it is the cumulative function up until now
+        index = bisect(cum_fun, value)
+        if index == len(cum_fun):
+            return cum_fun[-1] # Returns last one
+        else:
+            return cum_fun[index]
 
     def ks_test(z):
         if z == 0:
             return 1
         elif z < 1.18:  # Numerically optimal cutoff
             block = ((np.exp((-1. * np.pi ** 2) / (8 * z ** 2))))
-            p_ks = (np.sqrt(2 * np.pi) / z) * \
+            p = (np.sqrt(2 * np.pi) / z) * \
                    (block + block ** 9 + block ** 25)
         else:
             block = np.exp(-2 * z ** 2)
-            p_ks = 1 - 2 * (block - block ** 4 + block ** 9)
-        return 1 - p_ks
+            p = 1 - 2 * (block - block ** 4 + block ** 9)
+        return 1 - p
 
-    def ks_test_part(points, values, bins):
+    def ks_test_part(points, values, bins, my_values):
         summed_bins = sum(values)
         distribution = []
         for i in range(len(values)):
-            distribution.append(abs(sum(values[:i]) / summed_bins - norm.cdf(bins[i])))
+            distribution.append(abs(sum(values[:i]) / summed_bins - cdf(bins[i], my_values)))
 
         distribution = np.asarray(distribution)
 
@@ -87,7 +123,7 @@ def one_e(rand_gen):
         for j, size in enumerate(samples):
             gauss = box_muller(rand_gen, size)
             gauss = map_to_guass(gauss, u=0, sigma=1)
-            ks_tests[j], p_valus[j] = common_test(gauss, ks_test_part)
+            ks_tests[j], p_valus[j] = common_test(numbers[:size, i], gauss, ks_test_part)
         ax1.plot(samples, ks_tests, label='Set {}'.format(i))
         ax2.plot(samples, p_valus,  label='Set {}'.format((i)))
 

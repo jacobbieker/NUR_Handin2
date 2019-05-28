@@ -51,7 +51,6 @@ class BHNode:
             if len(child.particles) > 12: # Check to see if more than 12 particles per leaf node
                 print(len(child.particles))
 
-
         x = [particle.position[0] for particle in self.particles]
         y = [particle.position[1] for particle in self.particles]
 
