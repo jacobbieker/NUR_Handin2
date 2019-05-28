@@ -42,9 +42,14 @@ def integration_alg(func, lower_bound, upper_bound, number_of_steps):
 
 
 def part_b():
-    H0 = 7.16e-11
-    Omega_lambda = 0.7
-    Omega_m = 0.3
+
+    def a_from_z(z):
+        """
+        Gets a from z
+        :param z:
+        :return:
+        """
+        return 1/(z+1)
 
     def growth_factor_a(a):
         """
@@ -96,7 +101,7 @@ def part_b():
                 prev_deriv = deriv
 
     a0 = 0
-    final_a = 1 / 51 # z = 50, a = (z+1)
+    final_a = a_from_z(50) # z = 50, a = 1/(z+1)
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     sys.stdout = open('4b.txt', 'w')
     numerical_deriv = final_a * H(50) * differentiate_point(D_a, b=final_a, integral=integral)
