@@ -85,7 +85,8 @@ def one_e(rand_gen):
     def cdf(value, points):
         """
         CDF Value, a lot faster than cdf1 because no sorting or doing binary search
-        Takes advantage of numpy mask
+        Takes advantage of numpy mask, cdf1 upped the runtime to nearly 10 minutes
+        so this was chosen as an alternative
 
         :param value:
         :param points:
