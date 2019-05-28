@@ -68,6 +68,8 @@ def one_b(rand_gen):
     plt.axvline(x=u + 3 * sigma, c='g', ls='dashed')
     plt.axvline(x=u + 4 * sigma, c='y', ls='dashed')
     plt.xlim(u - 5 * sigma, u + 5 * sigma)
+    plt.xlabel("Random Number")
+    plt.ylabel("Normalized Count")
     plt.legend(loc='best')
     plt.savefig("./plots/box_gauss.png", dpi=300)
     plt.cla()
