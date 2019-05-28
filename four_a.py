@@ -47,7 +47,7 @@ def part_four_a():
         :param a:
         :return:
         """
-        return (1 / a ** 3) / (Omega_M / a ** 3 + Omega_Lambda) ** (3 / 2)
+        return (1 / a ** 3) / (Omega_M / a ** 3 + Omega_Lambda) ** 1.5
 
     def a_from_z(z):
         """

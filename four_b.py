@@ -83,7 +83,7 @@ def part_b():
         :param a:
         :return:
         """
-        return (1 / a ** 3) / (Omega_M / a ** 3 + Omega_Lambda) ** (3 / 2)
+        return (1 / a ** 3) / (Omega_M / a ** 3 + Omega_Lambda) ** 1.5
 
     def H(a):
         """
@@ -100,7 +100,7 @@ def part_b():
         :param integral:
         :return:
         """
-        return 5 * Omega_M / 2 * (Omega_M / a ** 3 + Omega_Lambda) ** (1 / 2) * integral
+        return (5/2) * Omega_M * (Omega_M / a ** 3 + Omega_Lambda) ** 0.5 * integral
 
     a0 = 0
     final_a = a_from_z(50)  # z = 50, a = 1/(z+1) (z+1) = 1/a
