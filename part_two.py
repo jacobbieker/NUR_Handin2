@@ -99,7 +99,7 @@ def part_two(rand_gen):
         # Reshape back to the grid and do the fft
         random_field = np.fft.ifft2(random_field.reshape((grid_size, grid_size))) # converts back to the square grid
         plt.cla()
-        im = plt.imshow(np.absolute(random_field))
+        im = plt.imshow(np.absolute(random_field)) # Have to make absolute to plot
         plt.xlabel("x (Mpc)")
         plt.ylabel("y (Mpc)") # Going for the Mpc look
         plt.title("Gaussian Random Field n = {}".format(n))

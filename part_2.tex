@@ -7,7 +7,17 @@ The file of the functions used for this exercise is:
 The result of this function is given by:
 
 My script produces the following results, showing the Gaussian random fields for n = -1, -2, and -3, in Figures \ref{fig:gauss1}, \ref{fig:gauss2}, and \ref{fig:gauss3}, respecitvely.
-As I chose the size to be in Mpc, the
+As I chose the size to be in Mpc, the minimum size that these plots show is 1 Mpc. This affects the
+maximum size in conjunction with $n$, as $n$ influences the structure formation on different scales. So, for example,
+in Fig. \ref{fig:gauss3}, there are over and underdensities on the scale of a few hundred Mpc, while for
+$n = -1$, the over and underdensities are on the order of one to a couple of Mpc in size. If I had chosen a physical size
+of 1 pixel is 1 kpc instead, the same would hold true, with the largest over and underdensities for $n = -3$ being a few hundred kpc
+in size, while for a larger $n$, $n = -1$, they would be at much smaller scales.
+
+Additionally, as $n$ increases from -3 to -1, $k$'s absolute value goes up, suggesting that the minimum and maximum $k$
+values get larger. For $n = -3$, the maximum over or underdensity has a $k$ value of around 0.003, while for $n = -1$, that value
+goes up by nearly an order of magnitude to 0.025. The minimum $k$ value between those two $n$ values similar changes, going from 0.0005
+to 0.005.
 
 
 \begin{figure}[h!]

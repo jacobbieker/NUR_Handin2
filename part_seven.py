@@ -62,7 +62,7 @@ class BHNode:
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
-        plt.savefig("plots/bhtreeAgain.png", dpi=300)
+        plt.savefig("plots/bhtree.png", dpi=300)
         plt.cla()
         plt.close()
 
