@@ -34,7 +34,7 @@ def common_test(points, func):
     :param points:
     :return:
     """
-    number_of_bins = int(100 * (max(points) - min(points)))
+    number_of_bins = 100
     values, bins = np.histogram(points, bins=number_of_bins)
 
     return func(points, values, bins)
