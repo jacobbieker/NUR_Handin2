@@ -5,14 +5,15 @@ The file of the functions used for this exercise is:
 \lstinputlisting{part_six.py}
 
 The result of this function is shown in Figures \ref{fig:mse}, \ref{fig:misclassify}, \ref{fig:predction}.
-Figure \ref{fig:mse} shows the Mean Square Error for the 10 epochs of training that were run on this code. The network as a whole
-takes a lot longer to train, but would take too long for the 10 minute limit, and so the pre-trained weights are loaded from disk and
-only trained for slightly longer. Figure \ref{fig:misclassify} is similar for the misclassification of the training examples. In this case,
-all exampels were used for training.
+Figure \ref{fig:mse} shows the Mean Square Error for the 100000 epochs the network was trained on. The network as a whole
+takes a lot longer to train, but would take too long for the 10 minute limit, and so the pre-trained weights, and training history, are loaded from disk.
+Figure \ref{fig:misclassify} is similar for the misclassification of the training examples. In this case,
+all exampels were used for training and predictions, and the network looked at the redshift and the mass of the host galaxy to determine if
+a GRB was long or short.
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=0.9\linewidth]{./plots/GRB_Error.png}
+  \includegraphics[width=0.9\linewidth]{./plots/GRB_MSError.png}
   \caption{Mean Square Error during training on GRB.}
   \label{fig:mse}
 \end{figure}
@@ -34,12 +35,12 @@ all exampels were used for training.
 As can be seen in \ref{fig:predction}, the logistic regression does not do a great
 job of separating the two classes, and there does not seem to be enough
 information for the network to properly learn a hyperplane that can
-separate the two classes. The histogram shows the distribution of class labels for the
-predictions, so we can see the number of correct classifications depends on what we use as the
-confidence cut to say a GRB is long or short.
+separate the two classes. The network seems to only predict that a GRB is a long GRB without predicting any short ones.
+The reason for this could be that there is a significant amount of missing data, and many more long GRBs vs short GRBs in
+the dataset. This is supported by the mean square error loss, and misclassification rate, which show the network quickly learning
+to predict all long GRBs and then stay fairly consistent after that.
 
-Additionally, the network requires a long time to train, so the
-weights are loaded from the disk from a previous training run. Missing data is not
+Missing data is not
 changed at all, with the idea that the network will learn to ignore the -1. values as not
 being correlated with the short or long classification. From the Universal Approximation Function,
 neural networks can approximate any function, and so this network could theoretically learn to differentiate between
