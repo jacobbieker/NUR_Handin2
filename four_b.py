@@ -59,13 +59,13 @@ def part_b():
         """
         return (1 / a ** 3) / (Omega_M / a ** 3 + Omega_Lambda) ** (3 / 2)
 
-    def H(z):
+    def H(a):
         """
-        Hubble Constant with respect to z
-        :param z:
+        Hubble Constant with respect to a
+        :param a:
         :return:
         """
-        return H0 * np.sqrt(Omega_M * (1 + z) ** 3 + Omega_Lambda)
+        return H0 * np.sqrt(Omega_M * (1/a) ** 3 + Omega_Lambda)
 
     def D_a(a, integral):
         """
@@ -101,10 +101,10 @@ def part_b():
                 prev_deriv = deriv
 
     a0 = 0
-    final_a = a_from_z(50) # z = 50, a = 1/(z+1)
+    final_a = a_from_z(50) # z = 50, a = 1/(z+1) (z+1) = 1/a
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     sys.stdout = open('4b.txt', 'w')
-    numerical_deriv = final_a * H(50) * differentiate_alg(D_a, b=final_a, integral=integral)
+    numerical_deriv = final_a * H(final_a) * differentiate_alg(D_a, b=final_a, integral=integral)
     print('Numerical d/da of Linear Growth Factor at z = 50: {}'.format(numerical_deriv))
     analytic_deriv = -15 / 4 * Omega_M ** 2 * H0 * integral / final_a ** 3
     print('Analytical d/da of Linear Growth Factor at z = 50: {}'.format(analytic_deriv))

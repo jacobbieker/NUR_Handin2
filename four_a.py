@@ -66,5 +66,5 @@ def part_four_a():
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     print("Integral value for the Integrand: {}".format(integral))
 
-    D = 5*Omega_M/2*np.sqrt(Omega_M/final_a**3 + Omega_Lambda)*integral
-    print("Linear growth factor at z = 50: {}".format(D))
+    lgf = 5*Omega_M/2*np.sqrt(Omega_M/final_a**3 + Omega_Lambda)*integral
+    print("Linear growth factor at z = 50: {}".format(lgf))
