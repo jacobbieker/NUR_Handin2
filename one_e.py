@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
-from one import random_generator
 
 def common_test(points, func):
     """
@@ -80,39 +79,34 @@ def one_e(rand_gen):
 
     samples = np.logspace(np.log10(10), np.log10(num_sizes), num=20).astype(np.int64)
 
-    all_ks = []
-    all_p = []
     ks_tests = np.zeros(20)
     p_valus = np.zeros(20)
+
+    fig, (ax1, ax2) = plt.subplots(2,1, figsize=(15, 15))
+    fig2, ax = plt.subplots(1,1)
 
     for i in range(num_nums):
         for j, size in enumerate(samples):
             gauss = box_muller(rand_gen, size)
             gauss = map_to_guass(gauss, u=0, sigma=1)
             ks_tests[j], p_valus[j] = common_test(gauss, ks_test_part)
-        all_ks.append(ks_tests)
-        all_p.append(p_valus)
+        ax1.plot(samples, ks_tests, label='Set {}'.format(i))
+        ax2.plot(samples, p_valus,  label='Set {}'.format((i)))
 
-    for i in range(len(all_ks)):
-        plt.plot(samples, all_ks[i], label='KS Test Set {}'.format(i))
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel("Number of Points")
-    plt.ylabel("KS Statistic (D)")
-    plt.title("KS Test For Rand Sets")
-    plt.legend(loc='best')
-    plt.savefig("plots/RandNumKS.png", dpi=300)
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1.set_xlabel("Number of Points")
+    ax1.set_ylabel("KS Statistic (D)")
+    ax1.set_title("KS Test")
+    ax1.legend(loc='best')
+    ax2.set_xscale('log')
+    ax2.set_yscale('log')
+    ax2.set_xlabel("Number of Points")
+    ax2.set_ylabel("Probability / 1 - p_value")
+    ax2.set_title("KS P values")
+    ax2.legend(loc='best')
+    fig.suptitle("KS Test on Random Sets")
+
+    fig.savefig("plots/RandNumKS.png", dpi=300)
+
     plt.cla()
-
-    for i in range(len(all_p)):
-        plt.plot(samples, p_valus, label='KS P-Value Set {}'.format((i)))
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel("Number of Points")
-    plt.ylabel("Probability / 1 - p_value")
-    plt.title("KS Test For Rand Sets")
-    plt.legend(loc='best')
-    plt.savefig("plots/KStest_pvalue.png", dpi=300)
-    plt.cla()
-
-one_e(random_generator(5227))
