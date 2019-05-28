@@ -73,3 +73,4 @@ def one_b(rand_gen):
     plt.legend(loc='best')
     plt.savefig("./plots/box_gauss.png", dpi=300)
     plt.cla()
+    plt.close()

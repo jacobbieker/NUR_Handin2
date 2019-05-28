@@ -177,6 +177,7 @@ def one_e(rand_gen):
     fig.suptitle("KS Test on Random Sets")
 
     fig.savefig("plots/RandNumKS.png", dpi=300)
+    plt.close(fig)
 
     ax3.set_xscale('log')
     ax3.set_yscale('log')
@@ -195,8 +196,7 @@ def one_e(rand_gen):
     fig1.suptitle("KS Test on Random Sets")
 
     fig1.savefig("plots/RandNumKS_sci.png", dpi=300)
-
     plt.cla()
-    plt.close()
+    plt.close(fig1)
 
 
