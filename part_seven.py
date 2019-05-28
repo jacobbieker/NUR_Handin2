@@ -24,7 +24,15 @@ class BHNode:
         self.is_leaf = False
         self.moment = 0
 
-        self.generate_quadrants(limit=12)
+        self.generate_quadrants(limit=12) # Construct the Tree recursively
+
+    def bfs(self):
+        all_nodes = [self] + self.children
+
+        for child in self.children:
+            all_nodes += child.bfs()
+
+        return all_nodes
 
     def plot(self, xlabel='', ylabel=''):
         """
@@ -39,6 +47,7 @@ class BHNode:
 
         # Get children
         children = self.get_children()
+        print(len(children))
 
         x = [particle.position[0] for particle in self.particles]
         y = [particle.position[1] for particle in self.particles]
@@ -83,6 +92,7 @@ class BHNode:
 
         if self.is_leaf:
             children.append(self)
+            print(len(self.particles))
 
         else:
             for child in self.children:
@@ -118,7 +128,7 @@ class BHNode:
             self.is_leaf = True
             return
 
-        elif int(len(self.particles)) <= limit:
+        elif len(self.particles) <= limit:
             self.is_leaf = True
             for part in self.particles:
                 part.node = self
@@ -129,6 +139,8 @@ class BHNode:
             lower_rpart = []
             upper_rpart = []
             upper_lpart = []
+            for part in self.particles:
+                part.node = self
 
             dx = 0.5 * self.length  # Change in each direction
             origin = (self.center[0] - dx, self.center[1] - dx)
@@ -173,12 +185,7 @@ class BHNode:
                                                     particles=upper_lpart,
                                                     parent=self))
 
-            for child in self.children:
-                if len(child.particles) > limit:
-                    child.generate_quadrants(limit=12)
-
         return self
-
 
 # Now run the Part 7 stuff
 def part_seven():

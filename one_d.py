@@ -106,7 +106,7 @@ def one_d(rand_gen):
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel("Number of Points")
-    plt.ylabel("Probability / 1 - p_value")
+    plt.ylabel("Probability")
     plt.legend(loc='best')
     plt.savefig("plots/Kuiper_pvalue.png", dpi=300)
     plt.cla()

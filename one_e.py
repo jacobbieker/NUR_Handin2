@@ -83,7 +83,7 @@ def one_e(rand_gen):
     p_valus = np.zeros(20)
 
     fig, (ax1, ax2) = plt.subplots(2,1, figsize=(15, 15))
-    fig2, ax = plt.subplots(1,1)
+    #fig2, ax = plt.subplots(1,1)
 
     for i in range(num_nums):
         for j, size in enumerate(samples):
@@ -95,14 +95,16 @@ def one_e(rand_gen):
 
     ax1.set_xscale('log')
     ax1.set_yscale('log')
+    ax1.set_ylim(1e-3,1)
     ax1.set_xlabel("Number of Points")
     ax1.set_ylabel("KS Statistic (D)")
     ax1.set_title("KS Test")
     ax1.legend(loc='best')
     ax2.set_xscale('log')
+    ax2.set_ylim(1e-4, 1.2)
     ax2.set_yscale('log')
     ax2.set_xlabel("Number of Points")
-    ax2.set_ylabel("Probability / 1 - p_value")
+    ax2.set_ylabel("Probability")
     ax2.set_title("KS P values")
     ax2.legend(loc='best')
     fig.suptitle("KS Test on Random Sets")
@@ -110,3 +112,4 @@ def one_e(rand_gen):
     fig.savefig("plots/RandNumKS.png", dpi=300)
 
     plt.cla()
+    plt.close()
