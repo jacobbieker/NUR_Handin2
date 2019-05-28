@@ -10,8 +10,6 @@ def common_test(points, func):
     """
     number_of_bins = int(100 * (max(points) - min(points)))
     values, bins = np.histogram(points, bins=number_of_bins)
-    bin_width = bins[1] - bins[0]
-    bins += bin_width
 
     return func(points, values, bins)
 
@@ -102,11 +100,11 @@ def one_e(rand_gen):
     ax1.legend(loc='best')
     ax2.set_xscale('log')
     ax2.set_ylim(1e-4, 1.2)
-    ax2.set_yscale('log')
+    #ax2.set_yscale('log')
     ax2.set_xlabel("Number of Points")
     ax2.set_ylabel("Probability")
     ax2.set_title("KS P values")
-    ax2.legend(loc='best')
+    ax2.legend(loc='upper left')
     fig.suptitle("KS Test on Random Sets")
 
     fig.savefig("plots/RandNumKS.png", dpi=300)

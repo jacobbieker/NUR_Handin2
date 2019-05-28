@@ -58,7 +58,7 @@ def gauss_complex(rand_gen, num_samples, u=0, sigma=1):
 
 def power_spectrum(kx, ky, n):
     """
-    Calcs powerspecturm, which is proportional of k**n = (kx,ky)**n
+    Calcs power specturm, which is proportional of k**n = (kx,ky)**n
     :param kx:
     :param ky:
     :param n:
@@ -77,7 +77,7 @@ def part_two(rand_gen):
     :param rand_gen: Random number Generator
     :return:
     """
-    grid_size = 1024
+    grid_size = 1024 # grid size in pixels
     # Create kx, ky grid points lists
     kx = [i for i in range(-511, 513)]
     ky = [i for i in range(-511, 513)]
@@ -100,8 +100,8 @@ def part_two(rand_gen):
         random_field = np.fft.ifft2(random_field.reshape((grid_size, grid_size))) # converts back to the square grid
         plt.cla()
         im = plt.imshow(np.absolute(random_field))
-        plt.xlabel("x (kpc)")
-        plt.ylabel("y (kpc)")
+        plt.xlabel("x (Mpc)")
+        plt.ylabel("y (Mpc)") # Going for the Mpc look
         plt.title("Gaussian Random Field n = {}".format(n))
         plt.colorbar(im, label="abs(K)")
         plt.savefig("plots/GaussianField{}.png".format(n), dpi=300)

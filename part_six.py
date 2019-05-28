@@ -242,13 +242,26 @@ def part_six():
     plt.savefig("plots/GRB_Misclassification.png", dpi=300)
     plt.cla()
 
-    predict_labels, labels = predict(weights, training_data, labels)
+    predict_labels, _ = predict(weights, training_data, labels)
     # Histogram over the whole thing
     # Create histogram with 0 or 1 for the actual classes
 
-    hist_labels = int(labels is True)
-    predict_labels = int(predict_labels is True)
-    plt.hist(predict_labels, bins=10, label="Predicted Labels")
-    plt.hist(hist_labels, bins=10, histtype='step', label="True Labels")
+    hist_labels = []
+    for label in labels:
+        if label:
+            hist_labels.append(1)
+        else:
+            hist_labels.append(0)
+    predictions = []
+    for label in predict_labels:
+        if label:
+            predictions.append(1)
+        else:
+            predictions.append(0)
+    values, bins, _ = plt.hist(hist_labels, bins=10, histtype='step', label="True Labels")
+    plt.hist(predictions, histtype='step', bins=bins, label="Predicted Labels")
+    plt.legend(loc='best')
+    plt.xlabel("Value (1 for Long, 0 for Short)")
+    plt.ylabel("Count")
     plt.savefig("plots/GRB_Histogram.png", dpi=300)
     plt.cla()

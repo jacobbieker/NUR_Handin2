@@ -45,9 +45,12 @@ class BHNode:
         plt.xlim(self.center[0] - self.length / 2, self.center[0] + self.length / 2)
         plt.ylim(self.center[1] - self.length / 2, self.center[1] + self.length / 2)
 
-        # Get children
+        # Get children, so all the leaf nodes
         children = self.get_children()
-        print(len(children))
+        for child in children:
+            if len(child.particles) > 12: # Check to see if more than 12 particles per leaf node
+                print(len(child.particles))
+
 
         x = [particle.position[0] for particle in self.particles]
         y = [particle.position[1] for particle in self.particles]
@@ -59,7 +62,7 @@ class BHNode:
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
 
-        plt.savefig("plots/bhtree.png", dpi=300)
+        plt.savefig("plots/bhtreeAgain.png", dpi=300)
         plt.cla()
         plt.close()
 
@@ -92,7 +95,6 @@ class BHNode:
 
         if self.is_leaf:
             children.append(self)
-            print(len(self.particles))
 
         else:
             for child in self.children:
@@ -128,13 +130,13 @@ class BHNode:
             self.is_leaf = True
             return
 
-        elif len(self.particles) <= limit:
+        elif len(self.particles) < limit:
             self.is_leaf = True
             for part in self.particles:
                 part.node = self
             return
 
-        elif len(self.particles) > limit:
+        elif len(self.particles) >= limit:
             lower_lpart = []
             lower_rpart = []
             upper_rpart = []
@@ -143,22 +145,25 @@ class BHNode:
                 part.node = self
 
             dx = 0.5 * self.length  # Change in each direction
-            origin = (self.center[0] - dx, self.center[1] - dx)
+            origin = (self.center[0] - dx, self.center[1] - dx) # Origin for bottom left one
             lower_left = (origin[0], origin[0] + dx, origin[1], origin[1] + dx)  # (x,x,y,y)
+
             lower_right = (origin[0] + dx, origin[0] + 2 * dx, origin[1], origin[1] + dx)
+
             upper_right = (origin[0] + dx, origin[0] + 2 * dx, origin[1] + dx, origin[1] + 2 * dx)
+
             upper_left = (origin[0], origin[0] + dx, origin[1] + dx, origin[1] + 2 * dx)
 
             for part in self.particles: # Goes through and puts the particles in each correct quadrant
                 position = part.position
-                if lower_left[0] <= position[0] < lower_left[1] and lower_left[2] <= position[1] < lower_left[3]:
+                if lower_left[0] <= position[0] <= lower_left[1] and lower_left[2] <= position[1] <= lower_left[3]:
                     lower_lpart.append(part)
-                elif lower_right[0] <= position[0] <= lower_right[1] and lower_right[2] <= position[1] < lower_right[3]:
+                elif lower_right[0] <= position[0] <= lower_right[1] and lower_right[2] <= position[1] <= lower_right[3]:
                     lower_rpart.append(part)
                 elif upper_right[0] <= position[0] <= upper_right[1] and upper_right[2] <= position[1] <= upper_right[
                     3]:
                     upper_rpart.append(part)
-                elif upper_left[0] <= position[0] < upper_left[1] and upper_left[2] <= position[1] <= upper_left[3]:
+                elif upper_left[0] <= position[0] <= upper_left[1] and upper_left[2] <= position[1] <= upper_left[3]:
                     upper_lpart.append(part)
 
             for i in range(2):

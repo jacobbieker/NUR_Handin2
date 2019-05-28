@@ -4,7 +4,10 @@ The file of the functions used for this exercise is:
 
 \lstinputlisting{part_seven.py}
 
-My script produces the following result, see Fig. \ref{fig:bhtree}.
+My script produces the following result, see Fig. \ref{fig:bhtree}. As can be seen, the BHTree does seem to mostly work.
+In fact, while the plot seems to suggest that the BHTree did not correctly partition the space down to less than 12 particles
+per node, from checking all the leaf nodes in the tree, I confirmed that there is no leaf nodes with more than 12 particles. So
+something seems to be wrong with the plotting, but I was unable to fix that at this time.
 
 \begin{figure}[h!]
   \centering
@@ -12,6 +15,7 @@ My script produces the following result, see Fig. \ref{fig:bhtree}.
   \caption{BHTree Space Separation and Points.}
   \label{fig:bhtree}
 \end{figure}
+
 
 The n = 0 multipole moment for the leaf node containg the particle with index i = 100 and that of
 all its parent nodes up to the root node is shown here, along with the center of the box and width of the box that that

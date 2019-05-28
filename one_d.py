@@ -12,8 +12,6 @@ def common_test(points, func):
     """
     number_of_bins = int(100 * (max(points) - min(points)))
     values, bins = np.histogram(points, bins=number_of_bins)
-    bin_width = bins[1] - bins[0]
-    bins += bin_width
 
     return func(points, values, bins)
 
