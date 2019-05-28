@@ -64,7 +64,7 @@ def one_e(rand_gen):
                 low = mid + 1
         return low
 
-    def cdf(value, points):
+    def cdf1(value, points):
         """
         Computes CDF of points up to value
         :param values: Value to get the Cumsum at
@@ -81,6 +81,17 @@ def one_e(rand_gen):
             return cum_fun[-1] # Returns last one
         else:
             return cum_fun[index]
+
+    def cdf(value, points):
+        """
+        CDF Value, a lot faster than cdf1 because no sorting or doing binary search
+        Takes advantage of numpy mask
+
+        :param value:
+        :param points:
+        :return:
+        """
+        return len(points[points <= value])/len(points)
 
     def ks_test(z):
         if z == 0:
@@ -99,10 +110,25 @@ def one_e(rand_gen):
         distribution = []
         for i in range(len(values)):
             distribution.append(abs(sum(values[:i]) / summed_bins - cdf(bins[i], my_values)))
+            #distribution.append(abs(sum(values[:i]) / summed_bins - norm.cdf(bins[i])))
 
         distribution = np.asarray(distribution)
 
-        D = max(abs(distribution))
+        D = max(distribution)
+        z = D * (np.sqrt(len(points)) + 0.12 + 0.11 / np.sqrt(len(points)))
+
+        return D, ks_test(z)
+
+    def sciks_test_part(points, values, bins, my_values):
+        summed_bins = sum(values)
+        distribution = []
+        for i in range(len(values)):
+            #distribution.append(abs(sum(values[:i]) / summed_bins - cdf(bins[i], my_values)))
+            distribution.append(abs(sum(values[:i]) / summed_bins - norm.cdf(bins[i])))
+
+        distribution = np.asarray(distribution)
+
+        D = max(distribution)
         z = D * (np.sqrt(len(points)) + 0.12 + 0.11 / np.sqrt(len(points)))
 
         return D, ks_test(z)
@@ -115,17 +141,23 @@ def one_e(rand_gen):
 
     ks_tests = np.zeros(20)
     p_valus = np.zeros(20)
+    sci_ks = np.zeros(20)
+    scp_values = np.zeros(20)
 
     fig, (ax1, ax2) = plt.subplots(2,1, figsize=(15, 15))
-    #fig2, ax = plt.subplots(1,1)
+    fig1, (ax3, ax4) = plt.subplots(2,1, figsize=(15, 15))
 
     for i in range(num_nums):
         for j, size in enumerate(samples):
             gauss = box_muller(rand_gen, size)
             gauss = map_to_guass(gauss, u=0, sigma=1)
+            # Could have used sorting method from last handin, but out of time
             ks_tests[j], p_valus[j] = common_test(numbers[:size, i], gauss, ks_test_part)
+            sci_ks[j], scp_values[j] = common_test(numbers[:size, i], gauss, sciks_test_part)
         ax1.plot(samples, ks_tests, label='Set {}'.format(i))
         ax2.plot(samples, p_valus,  label='Set {}'.format((i)))
+        ax3.plot(samples, sci_ks, label='Set {}'.format(i))
+        ax4.plot(samples, scp_values,  label='Set {}'.format((i)))
 
     ax1.set_xscale('log')
     ax1.set_yscale('log')
@@ -145,5 +177,25 @@ def one_e(rand_gen):
 
     fig.savefig("plots/RandNumKS.png", dpi=300)
 
+    ax3.set_xscale('log')
+    ax3.set_yscale('log')
+    ax3.set_ylim(1e-3,1)
+    ax3.set_xlabel("Number of Points")
+    ax3.set_ylabel("KS Statistic (D)")
+    ax3.set_title("KS Test")
+    ax3.legend(loc='best')
+    ax4.set_xscale('log')
+    ax4.set_ylim(1e-4, 1.2)
+    #ax2.set_yscale('log')
+    ax4.set_xlabel("Number of Points")
+    ax4.set_ylabel("Probability")
+    ax4.set_title("KS P values")
+    ax4.legend(loc='upper left')
+    fig1.suptitle("KS Test on Random Sets")
+
+    fig1.savefig("plots/RandNumKS_sci.png", dpi=300)
+
     plt.cla()
     plt.close()
+
+

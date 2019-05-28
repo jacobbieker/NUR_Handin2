@@ -54,12 +54,12 @@ def one_c(rand_gen):
             return 1
         elif z < 1.18:  # Numerically optimal cutoff
             block = ((np.exp((-1. * np.pi ** 2) / (8 * z ** 2))))
-            p_ks = (np.sqrt(2 * np.pi) / z) * \
+            p = (np.sqrt(2 * np.pi) / z) * \
                    (block + block ** 9 + block ** 25)
         else:
             block = np.exp(-2 * z ** 2)
-            p_ks = 1 - 2 * (block - block ** 4 + block ** 9)
-        return 1 - p_ks
+            p = 1 - 2 * (block - block ** 4 + block ** 9)
+        return 1 - p
 
     def ks_test_part(points, values, bins):
         summed_bins = sum(values)
@@ -69,7 +69,7 @@ def one_c(rand_gen):
 
         distribution = np.asarray(distribution)
 
-        D = max(abs(distribution))
+        D = max(distribution)
         z = D * (np.sqrt(len(points)) + 0.12 + 0.11 / np.sqrt(len(points)))
 
         return D, ks_test(z)
