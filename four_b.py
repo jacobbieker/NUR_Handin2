@@ -105,6 +105,6 @@ def part_b():
     integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     sys.stdout = open('4b.txt', 'w')
     numerical_deriv = final_a * H(50) * differentiate_point(D_a, b=final_a, integral=integral)
-    print('Numerical d/dz of Linear Growth Factor at z = 50: {}'.format(numerical_deriv))
+    print('Numerical d/da of Linear Growth Factor at z = 50: {}'.format(numerical_deriv))
     analytic_deriv = -15 / 4 * Omega_M ** 2 * H0 * integral / final_a ** 3
-    print('Analytical d/dz of Linear Growth Factor at z = 50: {}'.format(analytic_deriv))
+    print('Analytical d/da of Linear Growth Factor at z = 50: {}'.format(analytic_deriv))
