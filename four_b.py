@@ -56,39 +56,44 @@ def part_b():
 
     def H(z):
         """
-        Hubble Constant
+        Hubble Constant with respect to z
         :param z:
         :return:
         """
         return H0 * np.sqrt(Omega_M * (1 + z) ** 3 + Omega_Lambda)
 
-    def D_a(a, A):
+    def D_a(a, integral):
         """
-        Linear Growth Factor D(a)
+        Linear Growth Factor D(a) with precalced integral
         :param a:
-        :param A:
+        :param integral:
         :return:
         """
-        return 5 * Omega_M / 2 * (Omega_M / a ** 3 + Omega_Lambda) ** (1 / 2) * A
+        return 5 * Omega_M / 2 * (Omega_M / a ** 3 + Omega_Lambda) ** (1 / 2) * integral
 
-    def differentiate_point(func, b, A, eps=1e-12):
+    def differentiate_point(func, b, integral, eps=1e-12):
         """
-        Numerical differentiation at point
+        Numerical differentiation at point by calculating deriviative at a point and halving step size
+
         :param func:
         :param b:
         :param eps:
         :return:
         """
+
         h = 0.01
-        dydx = (func(b + h / 2, A) - func(b - h / 2, A)) / h
+        # First step
+        def calc_deriv():
+            return (func(b + h / 2, integral) - func(b - h / 2, integral)) / h
+        prev_deriv = calc_deriv()
 
         while True:
-            h = h / 2
-            d = (func(b + h / 2, A) - func(b - h / 2, A)) / h
-            if abs(d - dydx) < eps:
-                return d
+            h = h / 2 # Cut step size in half each iteration
+            deriv = calc_deriv()
+            if abs(deriv - prev_deriv) < eps: # Means it has converged
+                return deriv
             else:
-                dydx = d
+                prev_deriv = deriv
 
     def linear_growth_factor(z):
         return (5 * Omega_m * H0 ** 2) / 2 * ((H0 ** 2) * (Omega_m * ((1 + z) ** 3) + Omega_lambda)) ** 0.5
@@ -98,11 +103,10 @@ def part_b():
                     (H0 ** 2) * (Omega_m * (1 + z_prime) ** 3 + Omega_lambda)) ** 1.5
 
     a0 = 0
-    a_final = 1 / 51
-    A = integration_alg(growth_factor_a, a0, a_final, 10000)
+    final_a = 1 / 51 # z = 50, a = (z+1)
+    integral = integration_alg(growth_factor_a, a0, final_a, 20000)
     sys.stdout = open('4b.txt', 'w')
-    D_prime = -15 / 4 * Omega_M ** 2 * H0 * A / a_final ** 3
-    print('First derivative of Linear Growth Factor at z = 50 (a = 1/51): {:.8e}'.format(D_prime))
-
-    D_prime_numerical = a_final * H(1 / a_final - 1) * differentiate_point(D_a, b=a_final, eps=1e-13, A=A)
-    print('First derivative of Linear Growth Factor at z = 50 (a = 1/51), numerical: {:.8e}'.format(D_prime_numerical))
+    numerical_deriv = final_a * H(50) * differentiate_point(D_a, b=final_a, integral=integral)
+    print('Numerical d/dz of Linear Growth Factor at z = 50: {}'.format(numerical_deriv))
+    analytic_deriv = -15 / 4 * Omega_M ** 2 * H0 * integral / final_a ** 3
+    print('Analytical d/dz of Linear Growth Factor at z = 50: {}'.format(analytic_deriv))

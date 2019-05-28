@@ -53,10 +53,10 @@ def part_four_a():
         return (1/a**3)/(Omega_M/a**3 + Omega_Lambda)**(3/2)
 
     a0 = 0
-    a_final = 1/51
+    final_a = 1/51 # z = 50, a = (z+1)
     sys.stdout = open('4a.txt', 'w')
-    A = integration_alg(growth_factor_a, a0, a_final, 10000)
-    print("Integral value: {:.7e}".format(A))
+    integral = integration_alg(growth_factor_a, a0, final_a, 10000)
+    print("Integral value for the Integrand: {}".format(integral))
 
-    D = 5*Omega_M/2*np.sqrt(Omega_M/a_final**3 + Omega_Lambda)*A
-    print("Linear growth factor at z = 50 (a = 1/51): {:.8e}".format(D))
+    D = 5*Omega_M/2*np.sqrt(Omega_M/final_a**3 + Omega_Lambda)*integral
+    print("Linear growth factor at z = 50: {}".format(D))
